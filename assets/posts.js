@@ -6,11 +6,26 @@ window.BLOG = {
     bio: '在 DeepSeek Harness 里折腾插件的人。喜欢把界面改成自己喜欢的样子，也喜欢研究一条鱼为什么会被叫成大肥鱼。',
     avatar: 'assets/fish.png',
     links: [
-      { label: 'GitHub', href: 'https://github.com/' },
+      { label: 'GitHub', href: 'https://github.com/feaus-001' },
       { label: '邮箱', href: 'mailto:you@example.com' },
     ],
   },
   posts: [
+    {
+      slug: 'hello-letter',
+      title: '给各位到者的一封信',
+      date: '2026-11-11',
+      tags: ['萌新必读'],
+      summary: '关于我第一次尝试个人网站。',
+      body: `## 关于我为什么做网站
+
+我之所以做网页，原因有很多：
+
+- 第一：我很喜欢个人的网站科技创作，因此想入手试试看；
+- 第二：拖更了很久的尝试，不得不更，再不更新没机会了。
+
+做这些的目的，不仅是给自己，也是给大家。`,
+    },
     {
       slug: 'pixel-dsh',
       title: '我把 DSH 的字体换成了像素字体',
@@ -90,37 +105,6 @@ window.BLOG = {
     - id: study-planner
       name: '@local/study-planner'
 \`\`\`
-
-## 2. 样式别用写死的颜色
-
-DSH 的界面用 \`--dsw-alias-*\` 这组主题变量。写死 \`#fff\` 在亮色下还行，切到暗色就一片刺眼。用变量的话，主题换了样式自动跟着走。
-
-## 3. 装完不生效，先看 application
-
-\`install_bundle\` 返回的 \`application\` 才是结论：
-
-- \`applied\`：已经生效；
-- \`restart-required\`：得重启应用，常见原因是包解析表变了；
-- \`failed\`：看 \`error.code\`，别猜。
-
-日志和进程列表都不能证明插件生效，槽位查询和这个字段才能。`,
-    },
-  ],
-};
-{
-      slug: 'dsh-plugin-notes',
-      title: '给各位到者的一封信',
-      date: '2026-11-11',
-      tags: ['DSH', '萌新必读'],
-      summary: '关于我第一次尝试个人网站。',
-      body: `## 1. 关于我为什么做网站
-我之所以做网页，原因有很多：
-
-- \`第一\`：我很喜欢个人的网站科技创作，因此想入手试试看；
-- \`第二\`：托更了很久的尝试，不得不更，再不更新没机会了
-
-做这些的目的，不仅是给自己，也是给大家
-
 
 ## 2. 样式别用写死的颜色
 
