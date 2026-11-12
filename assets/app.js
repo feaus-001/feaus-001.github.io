@@ -9,6 +9,52 @@
   var app = document.getElementById('app');
   var themeButton = document.getElementById('theme-toggle');
 
+  function sectionLabel(name, fallback) {
+    var sections = site.sections || {};
+    return sections[name] || fallback;
+  }
+
+  function hexToRgb(hex) {
+    var match = /^#?([a-f\d]{3}|[a-f\d]{6})$/i.exec(String(hex || '').trim());
+    if (!match) return null;
+    var value = match[1];
+    if (value.length === 3) value = value[0] + value[0] + value[1] + value[1] + value[2] + value[2];
+    return {
+      r: parseInt(value.slice(0, 2), 16),
+      g: parseInt(value.slice(2, 4), 16),
+      b: parseInt(value.slice(4, 6), 16),
+    };
+  }
+
+  function mixHex(accent, base, ratio) {
+    var a = hexToRgb(accent);
+    var b = hexToRgb(base);
+    if (!a || !b) return accent;
+    var channels = ['r', 'g', 'b'].map(function (key) {
+      return Math.round(a[key] * (1 - ratio) + b[key] * ratio).toString(16).padStart(2, '0');
+    });
+    return '#' + channels.join('');
+  }
+
+  function applyAccent() {
+    var theme = site.theme || {};
+    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    var accent = dark ? (theme.accentDark || theme.accent) : (theme.accent || theme.accentDark);
+    if (!accent) return;
+    document.documentElement.style.setProperty('--accent', accent);
+    document.documentElement.style.setProperty('--accent-soft', mixHex(accent, dark ? '#0e1117' : '#ffffff', 0.85));
+  }
+
+  function applySiteChrome() {
+    var brand = document.querySelector('.brand');
+    if (brand && site.name) brand.textContent = site.name;
+    var navLinks = document.querySelectorAll('.nav-link');
+    if (navLinks[0]) navLinks[0].textContent = sectionLabel('posts', '文章');
+    if (navLinks[1]) navLinks[1].textContent = sectionLabel('about', '关于');
+    var footer = document.querySelector('.site-footer');
+    if (footer && site.footer && footer.firstElementChild) footer.firstElementChild.textContent = site.footer;
+  }
+
   function escapeHtml(value) {
     return String(value).replace(/[&<>"']/g, function (char) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char];
@@ -163,7 +209,7 @@
 
     return (
       renderHero() +
-      '<h2 class="section-title">文章</h2>' +
+      '<h2 class="section-title">' + escapeHtml(sectionLabel('posts', '文章')) + '</h2>' +
       '<div class="post-list">' + (cards || '<p class="empty">还没有文章。</p>') + '</div>'
     );
   }
@@ -189,13 +235,14 @@
   }
 
   function renderAbout() {
+    var aboutText = site.about || site.bio;
     return (
       '<article class="article">' +
         '<a class="back-link" href="#/">← 返回文章列表</a>' +
-        '<h1 class="article-title">关于</h1>' +
+        '<h1 class="article-title">' + escapeHtml(sectionLabel('about', '关于')) + '</h1>' +
         '<div class="about-card">' +
           (site.avatar ? '<img class="hero-avatar" src="' + escapeHtml(site.avatar) + '" alt="头像">' : '') +
-          '<p class="hero-bio" style="margin-top:16px">' + escapeHtml(site.bio) + '</p>' +
+          '<p class="hero-bio" style="margin-top:16px">' + escapeHtml(aboutText) + '</p>' +
           '<div class="hero-links">' + links() + '</div>' +
         '</div>' +
       '</article>'
@@ -248,6 +295,7 @@
       themeButton.textContent = theme === 'dark' ? '☀' : '☾';
       themeButton.setAttribute('aria-label', theme === 'dark' ? '切换到浅色主题' : '切换到深色主题');
     }
+    applyAccent();
   }
 
   if (themeButton) {
@@ -260,6 +308,7 @@
 
   window.addEventListener('hashchange', render);
 
+  applySiteChrome();
   applyTheme(preferredTheme());
   render();
 })();

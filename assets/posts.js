@@ -5,6 +5,10 @@ window.BLOG = {
     tagline: "写点技术、折腾和日常",
     bio: "在 DeepSeek Harness 里折腾插件的人。喜欢把界面改成自己喜欢的样子，也喜欢研究一条鱼为什么会被叫成大肥鱼。",
     avatar: "assets/fish.png",
+    about: "",
+    footer: "© 2026 XinChen",
+    sections: { posts: "文章", about: "关于" },
+    theme: { accent: "#1f6feb", accentDark: "#7aa2ff" },
     links: [{ label: "GitHub", href: "https://github.com/feaus-001" }, { label: "邮箱", href: "mailto:you@example.com" }],
   },
   posts: [
