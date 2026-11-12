@@ -64,6 +64,10 @@
     if (navLinks[1]) navLinks[1].textContent = sectionLabel('about', '关于');
     var footer = document.querySelector('.site-footer');
     if (footer && site.footer && footer.firstElementChild) footer.firstElementChild.textContent = site.footer;
+    var buildMeta = document.querySelector('meta[name="site-build"]');
+    if (footer && buildMeta && footer.lastElementChild) {
+      footer.lastElementChild.textContent = '静态博客 · v' + String(buildMeta.getAttribute('content') || '').slice(0, 6);
+    }
   }
 
   function escapeHtml(value) {
