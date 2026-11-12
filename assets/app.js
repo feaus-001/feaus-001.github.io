@@ -155,8 +155,26 @@
       '</article>';
   }
 
+  function inboxUnlocked() {
+    try { return sessionStorage.getItem('blog-inbox-unlocked') === '1'; } catch (error) { return false; }
+  }
+
   function renderInbox() {
     if (!featureOn('inbox')) return '<p class="empty">收信箱未开启。</p>';
+    if (!inboxUnlocked()) {
+      return '<article class="article board">' +
+        '<a class="back-link" href="#/">← 返回文章列表</a>' +
+        '<h1 class="article-title">收信箱</h1>' +
+        '<p class="board-hint">站长专用，输入口令进入。</p>' +
+        '<form class="board-form" id="inbox-gate">' +
+          '<input id="inbox-pin" class="board-input" type="password" placeholder="口令" autocomplete="off">' +
+          '<div class="board-form-actions">' +
+            '<button class="board-btn board-btn-primary" type="submit">进入</button>' +
+            '<span class="board-status" id="inbox-status"></span>' +
+          '</div>' +
+        '</form>' +
+        '</article>';
+    }
     return '<article class="article board">' +
       '<a class="back-link" href="#/">← 返回文章列表</a>' +
       '<h1 class="article-title">收信箱</h1>' +
@@ -208,6 +226,22 @@
     }
 
     refreshGuestList(mode);
+    var gate = document.getElementById('inbox-gate');
+    if (gate) {
+      gate.addEventListener('submit', function (event) {
+        event.preventDefault();
+        var pin = document.getElementById('inbox-pin').value;
+        var expected = (site && site.inboxPin) || '052626';
+        if (pin === expected) {
+          try { sessionStorage.setItem('blog-inbox-unlocked', '1'); } catch (error) { /* ignore */ }
+          render();
+        } else {
+          var status = document.getElementById('inbox-status');
+          if (status) status.textContent = '口令不对';
+        }
+      });
+      return;
+    }
     var read = document.getElementById('inbox-read');
     if (read) {
       read.addEventListener('click', function () {
@@ -447,8 +481,7 @@
         '<p class="hero-tagline">' + escapeHtml(site.tagline) + '</p>' +
         '<p class="hero-bio">' + escapeHtml(site.bio) + '</p>' +
         '<div class="hero-links">' + links() + '</div>' +
-        (featureOn('guestbook') ? '<div class="hero-links"><a class="chip" href="#/guestbook">留言板</a>' +
-          (featureOn('inbox') ? '<a class="chip" href="#/inbox">收信箱</a>' : '') + '</div>' : '') +
+        (featureOn('guestbook') ? '<div class="hero-links"><a class="chip" href="#/guestbook">留言板</a></div>' : '') +
       '</section>'
     );
   }
