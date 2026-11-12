@@ -130,6 +130,7 @@
     var sections = site.sections || {};
     var theme = site.theme || {};
     var music = site.music || {};
+    var decor = site.decor || {};
     var out = [];
     out.push('/* 站点配置与文章数据。改这里就能更新博客，不需要构建工具。 */');
     out.push('window.BLOG = {');
@@ -165,6 +166,9 @@
     out.push('    music: { enabled: ' + (music.enabled === true) + ', tracks: [' + (music.tracks || []).map(function (track) {
       return '{ title: ' + json(track.title) + ', artist: ' + json(track.artist) + ', src: ' + json(track.src) + ' }';
     }).join(', ') + '] },');
+    out.push('    decor: { meteors: ' + (decor.meteors !== false) + ', seasons: ' + (decor.seasons !== false) +
+      ', progress: ' + (decor.progress !== false) + ', backToTop: ' + (decor.backToTop !== false) +
+      ', calendar: ' + (decor.calendar !== false) + ' },');
     out.push('  },');
     out.push('  posts: [');
     posts.forEach(function (post) {

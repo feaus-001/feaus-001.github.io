@@ -10,7 +10,8 @@ window.BLOG = {
     sections: { posts: "文章", about: "关于" },
     theme: { accent: "#1f6feb", accentDark: "#789ef7", bgLight: "#ffffff", bgDark: "#0e1117", bgImage: "assets/bg.jpg", rainbow: true, rainbowWidth: 3, rainbowSpeed: 3, rainbowAlpha: 100, cardAlpha: 27, cardBlur: 2, cardRadius: 0, cardShadow: true, layoutWidth: 720, bgBlur: 0, bgDim: 0, textLight: "#17191f", textDark: "#e6e9ef", mutedLight: "#6b7280", mutedDark: "#9aa3b2" },
     links: [{ label: "GitHub", href: "https://github.com/feaus-001" }, { label: "邮箱", href: "052626000abc@gmail.com" }],
-    music: { enabled: true, tracks: [{ title: "金魚。坏天氣", artist: "奶皇 / topkingcream", src: "assets/music/jinyu-bad-weather.flac" }] },
+    music: { enabled: true, tracks: [{ title: "金魚。坏天氣", artist: "奶皇 / topkingcream", src: "assets/music/jinyu-bad-weather.mp3" }] },
+    decor: { meteors: true, seasons: true, progress: true, backToTop: true, calendar: true },
   },
   posts: [
     {
