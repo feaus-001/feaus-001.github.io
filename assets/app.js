@@ -48,7 +48,9 @@
     var background = dark ? (theme.bgDark || theme.bgLight) : (theme.bgLight || theme.bgDark);
     if (background) root.style.setProperty('--bg', background);
     if (theme.bgImage) {
-      root.style.setProperty('--bg-image', 'url("' + String(theme.bgImage).replace(/"/g, '%22') + '")');
+      var imageUrl = String(theme.bgImage);
+      try { imageUrl = new URL(imageUrl, location.href).href; } catch (error) { /* 保留原值 */ }
+      root.style.setProperty('--bg-image', 'url("' + imageUrl.replace(/"/g, '%22') + '")');
       root.classList.add('has-bg-image');
     } else {
       root.classList.remove('has-bg-image');
