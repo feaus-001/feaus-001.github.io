@@ -317,9 +317,29 @@
     });
   }
 
+  function checkBuild() {
+    var meta = document.querySelector('meta[name="site-build"]');
+    if (!meta) return;
+    var current = meta.getAttribute('content');
+    if (!current || current === 'dev') return;
+    try {
+      if (sessionStorage.getItem('blog-build-check') === current) return;
+    } catch (error) { /* ignore */ }
+    fetch(location.pathname + '?v=' + Date.now(), { cache: 'no-store' })
+      .then(function (response) { return response.text(); })
+      .then(function (html) {
+        var match = /<meta name="site-build" content="([^"]+)"/.exec(html);
+        if (!match || match[1] === current) return;
+        try { sessionStorage.setItem('blog-build-check', match[1]); } catch (error) { /* ignore */ }
+        location.replace(location.pathname + '?v=' + encodeURIComponent(match[1]) + (location.hash || ''));
+      })
+      .catch(function () { /* 取不到就算了，下次再检 */ });
+  }
+
   window.addEventListener('hashchange', render);
 
   applySiteChrome();
   applyTheme(preferredTheme());
   render();
+  checkBuild();
 })();
