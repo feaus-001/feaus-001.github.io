@@ -8,7 +8,7 @@ window.BLOG = {
     about: "如果世界危机来临，我唯一能做的便是在此留下世人存在的足迹。",
     footer: "© 2026 by.XinChen",
     sections: { posts: "文章", about: "关于" },
-    theme: { accent: "#1f6feb", accentDark: "#789ef7", bgLight: "#ffffff", bgDark: "#0e1117", bgImage: "assets/bg.jpg", rainbow: true, rainbowWidth: 3, rainbowSpeed: 3, rainbowAlpha: 100, cardAlpha: 27, cardBlur: 2, cardRadius: 0, cardShadow: true, layoutWidth: 720, bgBlur: 0, bgDim: 0, textLight: "#17191f", textDark: "#e6e9ef", mutedLight: "#6b7280", mutedDark: "#9aa3b2" },
+    theme: { accent: "#1f6feb", accentDark: "#789ef7", bgLight: "#ffffff", bgDark: "#0e1117", bgImage: "assets/bg.png", rainbow: true, rainbowWidth: 3, rainbowSpeed: 3, rainbowAlpha: 100, cardAlpha: 27, cardBlur: 2, cardRadius: 0, cardShadow: true, layoutWidth: 720, bgBlur: 0, bgDim: 0, textLight: "#17191f", textDark: "#e6e9ef", mutedLight: "#ff0000", mutedDark: "#99ff00" },
     links: [{ label: "GitHub", href: "https://github.com/feaus-001" }, { label: "邮箱", href: "052626000abc@gmail.com" }],
     music: { enabled: true, tracks: [{ title: "金魚。坏天氣", artist: "奶皇 / topkingcream", src: "assets/music/jinyu-bad-weather.mp3" }] },
     decor: { meteors: true, seasons: true, progress: true, backToTop: true, calendar: true },
