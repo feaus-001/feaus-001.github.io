@@ -303,7 +303,7 @@ main {
   .post-card { padding: 16px; }
 }
 
-/* 自定义背景图：画在根元素上，body 用半透明底色保证文字可读 */
+/* 自定义背景图：画在根元素上，正文内容单独加一层半透明面板 */
 html.has-bg-image {
   background-image: var(--bg-image);
   background-size: cover;
@@ -313,7 +313,20 @@ html.has-bg-image {
 }
 
 html.has-bg-image body {
-  background: color-mix(in srgb, var(--bg) 55%, transparent);
+  background: transparent;
+}
+
+html.has-bg-image main {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.16);
+}
+
+html.has-bg-image .site-footer {
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--bg) 62%, transparent);
 }
 
 /* 窗口内圈的彩虹流光描边 */
@@ -326,9 +339,9 @@ html.has-bg-image body {
 html.rainbow-frame body::after {
   content: '';
   position: fixed;
-  inset: 8px;
+  inset: 0;
   z-index: 60;
-  border-radius: 16px;
+  border-radius: 0;
   padding: 2px;
   background: conic-gradient(
     from var(--rb-angle),
@@ -350,7 +363,8 @@ html.rainbow-frame body::after {
 }
 
 @media (max-width: 560px) {
-  html.rainbow-frame body::after { inset: 4px; border-radius: 12px; }
+  html.rainbow-frame body::after { inset: 0; border-radius: 0; }
+  html.has-bg-image main { border-radius: 14px; }
 }
 
 @keyframes rb-spin {
