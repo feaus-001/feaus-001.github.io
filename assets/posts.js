@@ -8,7 +8,7 @@ window.BLOG = {
     about: "",
     footer: "© 2026 by.XinChen",
     sections: { posts: "文章", about: "关于" },
-    theme: { accent: "#1f6feb", accentDark: "#789ef7", bgLight: "#ffffff", bgDark: "#0e1117", bgImage: "file:///F:/pcl/.minecraft/versions/1.19-Forge_41.0.63-OptiFine_H8/screenshots/2026-11-07_17.00.47.png", rainbow: true },
+    theme: { accent: "#1f6feb", accentDark: "#789ef7", bgLight: "#ffffff", bgDark: "#0e1117", bgImage: "assets/bg.png", rainbow: true },
     links: [{ label: "GitHub", href: "https://github.com/feaus-001" }, { label: "邮箱", href: "052626000abc@gmail.com" }],
   },
   posts: [
