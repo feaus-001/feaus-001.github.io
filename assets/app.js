@@ -294,6 +294,8 @@
           event.preventDefault();
           var name = (document.getElementById('board-name').value || '').trim();
           var text = (document.getElementById('board-text').value || '').trim();
+          if (name === '昵称（可留空）') name = '';
+          if (text === '想说的话…' || text === '想说的话...') text = '';
           if (!text) {
             if (status) status.textContent = '先写点什么吧';
             return;
