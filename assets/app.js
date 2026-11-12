@@ -115,6 +115,9 @@
           throw new Error('HTTP ' + response.status + ' ' + text.slice(0, 120));
         });
       }
+      if (response.status === 204) return null;
+      var type = response.headers.get('content-type') || '';
+      if (type.indexOf('json') < 0) return null;
       return response.json();
     });
   }
