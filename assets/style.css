@@ -317,9 +317,9 @@ html.has-bg-image body {
 }
 
 html.has-bg-image main {
-  margin-top: 20px;
+  margin-top: 0;
   margin-bottom: 20px;
-  border-radius: 18px;
+  border-radius: 0 0 18px 18px;
   background: color-mix(in srgb, var(--bg) 72%, transparent);
   -webkit-backdrop-filter: blur(12px) saturate(1.1);
   backdrop-filter: blur(12px) saturate(1.1);
@@ -330,7 +330,7 @@ html.has-bg-image .site-header {
   background: color-mix(in srgb, var(--bg) 72%, transparent);
   -webkit-backdrop-filter: blur(12px) saturate(1.1);
   backdrop-filter: blur(12px) saturate(1.1);
-  border-radius: 0 0 18px 18px;
+  border-radius: 18px 18px 0 0;
 }
 
 html.has-bg-image .site-footer {
