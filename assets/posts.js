@@ -5,7 +5,7 @@ window.BLOG = {
     tagline: "为人民服务⭐",
     bio: "“我们从来没靠过别人，我们只是靠自己这双手” —心辰Stellan",
     avatar: "assets/fish.png",
-    about: "",
+    about: "如果世界危机来临，我唯一能做的便是在此留下世人存在的足迹。",
     footer: "© 2026 by.XinChen",
     sections: { posts: "文章", about: "关于" },
     theme: { accent: "#1f6feb", accentDark: "#789ef7", bgLight: "#ffffff", bgDark: "#0e1117", bgImage: "assets/bg.jpg", rainbow: true, rainbowWidth: 3, rainbowSpeed: 3, rainbowAlpha: 100, cardAlpha: 27, cardBlur: 2, cardRadius: 0, cardShadow: true, layoutWidth: 720, bgBlur: 0, bgDim: 0, textLight: "#17191f", textDark: "#e6e9ef", mutedLight: "#6b7280", mutedDark: "#9aa3b2" },
