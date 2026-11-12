@@ -38,11 +38,22 @@
 
   function applyAccent() {
     var theme = site.theme || {};
-    var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    var root = document.documentElement;
+    var dark = root.getAttribute('data-theme') === 'dark';
     var accent = dark ? (theme.accentDark || theme.accent) : (theme.accent || theme.accentDark);
-    if (!accent) return;
-    document.documentElement.style.setProperty('--accent', accent);
-    document.documentElement.style.setProperty('--accent-soft', mixHex(accent, dark ? '#0e1117' : '#ffffff', 0.85));
+    if (accent) {
+      root.style.setProperty('--accent', accent);
+      root.style.setProperty('--accent-soft', mixHex(accent, dark ? '#0e1117' : '#ffffff', 0.85));
+    }
+    var background = dark ? (theme.bgDark || theme.bgLight) : (theme.bgLight || theme.bgDark);
+    if (background) root.style.setProperty('--bg', background);
+    if (theme.bgImage) {
+      root.style.setProperty('--bg-image', 'url("' + String(theme.bgImage).replace(/"/g, '%22') + '")');
+      root.classList.add('has-bg-image');
+    } else {
+      root.classList.remove('has-bg-image');
+    }
+    root.classList.toggle('rainbow-frame', theme.rainbow !== false);
   }
 
   function applySiteChrome() {

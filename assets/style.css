@@ -302,3 +302,58 @@ main {
   .article-title { font-size: 24px; }
   .post-card { padding: 16px; }
 }
+
+/* 自定义背景图 */
+html.has-bg-image body {
+  background-image: var(--bg-image);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+/* 窗口内圈的彩虹流光描边 */
+@property --rb-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+html.rainbow-frame body::after {
+  content: '';
+  position: fixed;
+  inset: 8px;
+  z-index: 60;
+  border-radius: 16px;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--rb-angle),
+    #ff6b6b,
+    #ffd93d,
+    #6bcb77,
+    #4d96ff,
+    #b06bff,
+    #ff6bd6,
+    #ff6b6b
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: rb-spin 9s linear infinite;
+  opacity: 0.85;
+}
+
+@media (max-width: 560px) {
+  html.rainbow-frame body::after { inset: 4px; border-radius: 12px; }
+}
+
+@keyframes rb-spin {
+  to { --rb-angle: 360deg; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.rainbow-frame body::after { animation: none; }
+}
+

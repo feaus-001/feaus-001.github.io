@@ -8,7 +8,7 @@ window.BLOG = {
     about: "",
     footer: "© 2026 by.XinChen",
     sections: { posts: "文章", about: "关于" },
-    theme: { accent: "#1f6feb", accentDark: "#789ef7" },
+    theme: { accent: "#1f6feb", accentDark: "#789ef7", bgLight: "#fbfbfd", bgDark: "#0e1117", bgImage: "", rainbow: true },
     links: [{ label: "GitHub", href: "https://github.com/feaus-001" }, { label: "邮箱", href: "052626000abc@gmail.com" }],
   },
   posts: [
