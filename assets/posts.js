@@ -1,37 +1,39 @@
 /* 站点配置与文章数据。改这里就能更新博客，不需要构建工具。 */
 window.BLOG = {
   site: {
-    name: 'XinChen',
-    tagline: '写点技术、折腾和日常',
-    bio: '在 DeepSeek Harness 里折腾插件的人。喜欢把界面改成自己喜欢的样子，也喜欢研究一条鱼为什么会被叫成大肥鱼。',
-    avatar: 'assets/fish.png',
-    links: [
-      { label: 'GitHub', href: 'https://github.com/feaus-001' },
-      { label: '邮箱', href: 'mailto:you@example.com' },
-    ],
+    name: "XinChen",
+    tagline: "写点技术、折腾和日常",
+    bio: "在 DeepSeek Harness 里折腾插件的人。喜欢把界面改成自己喜欢的样子，也喜欢研究一条鱼为什么会被叫成大肥鱼。",
+    avatar: "assets/fish.png",
+    links: [{ label: "GitHub", href: "https://github.com/feaus-001" }, { label: "邮箱", href: "mailto:you@example.com" }],
   },
   posts: [
     {
-      slug: 'hello-letter',
-      title: '给各位到者的一封信',
-      date: '2026-11-11',
-      tags: ['萌新必读'],
-      summary: '关于我第一次尝试个人网站。',
+      slug: "hello-letter",
+      title: "给各位到者的一封信",
+      date: "2026-11-11",
+      tags: ["萌新必读"],
+      summary: "关于我第一次尝试个人网站。",
       body: `## 关于我为什么做网站
 
 我之所以做网页，原因有很多：
 
 - 第一：我很喜欢个人的网站科技创作，因此想入手试试看；
 - 第二：拖更了很久的尝试，不得不更，再不更新没机会了。
+- 第三：也是因为我目前正在上学，如果后期上班赚钱养老婆立业了那就很难有时间去做这些东西了
 
-做这些的目的，不仅是给自己，也是给大家。`,
+嗯总之就是这样
+
+做这些的目的，不仅是给自己，也是给大家。
+
+各位访客，心辰Stellan欢迎你♥`,
     },
     {
-      slug: 'pixel-dsh',
-      title: '我把 DSH 的字体换成了像素字体',
-      date: '2026-11-11',
-      tags: ['DSH', '折腾'],
-      summary: '从系统字体装不上，到自己写一个插件让 Harness 自己加载字体，中间踩了两个坑。',
+      slug: "pixel-dsh",
+      title: "我把 DSH 的字体换成了像素字体",
+      date: "2026-11-11",
+      tags: ["DSH", "折腾"],
+      summary: "从系统字体装不上，到自己写一个插件让 Harness 自己加载字体，中间踩了两个坑。",
       body: `## 起因
 
 想让界面和自己的像素画对上，于是盯上了 Fusion Pixel 这套缝合像素字体。
@@ -58,11 +60,11 @@ window.BLOG = {
 > 结论：遇到“系统层不生效”的问题，有时候绕开系统层比修它更快。`,
     },
     {
-      slug: 'big-fat-fish',
-      title: '一条大肥鱼是怎么火起来的',
-      date: '2026-11-06',
-      tags: ['网络', 'AI'],
-      summary: '从一次识图乌龙，到鲸鱼娘、女仆装和“统一 D 量衡”，互联网是怎么给一个模型安排人设的。',
+      slug: "big-fat-fish",
+      title: "一条大肥鱼是怎么火起来的",
+      date: "2026-11-06",
+      tags: ["网络", "AI"],
+      summary: "从一次识图乌龙，到鲸鱼娘、女仆装和“统一 D 量衡”，互联网是怎么给一个模型安排人设的。",
       body: `## 外号的来历
 
 据说有人把 DeepSeek 的蓝色鲸鱼 logo 发给它，让它认图。它没认出自己，说这是一条“蓝色大肥鱼”。
@@ -86,11 +88,11 @@ window.BLOG = {
 官方没有参与，全是用户自己养出来的形象。模型可以升级，公众认知却不一定跟着更新——这大概是每个国民级 AI 都要面对的事。`,
     },
     {
-      slug: 'dsh-plugin-notes',
-      title: '给 DSH 写插件的三个坑',
-      date: '2026-10-28',
-      tags: ['DSH', '开发'],
-      summary: '侧栏入口、主面板、热加载，几个第一次写插件时容易踩的点。',
+      slug: "dsh-plugin-notes",
+      title: "给 DSH 写插件的三个坑",
+      date: "2026-10-28",
+      tags: ["DSH", "开发"],
+      summary: "侧栏入口、主面板、热加载，几个第一次写插件时容易踩的点。",
       body: `## 1. 侧栏入口和面板是两个槽位
 
 想让插件在左侧栏出现，要同时注册两个地方：

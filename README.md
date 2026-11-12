@@ -97,6 +97,18 @@ python -m http.server 8080
 
 > 想要「后台表单式编辑」（不碰代码、点点鼠标写文章），可以接 Decap CMS 或类似方案，需要多配一步 OAuth —— 要的话告诉我。
 
+## 本地可视化编辑器
+
+在 `blog` 目录里双击 `editor.cmd`（或运行 `node serve.mjs`），会自动打开
+<http://127.0.0.1:4173/editor.html>：
+
+- 左边写标题 / slug / 日期 / 标签 / 摘要 / 正文，右边实时预览文章页；
+- **保存**：写回 `assets/posts.js`，写入前做 JS 语法校验；
+- **发布**：通过 GitHub Git Data API（`api.github.com`）提交并更新 `main`，
+  不依赖 `git push`，所以本机 HTTPS 到 github.com 被墙时也能用；
+- 服务只监听 `127.0.0.1`，编辑器文件不参与发布（`assets/editor-core.js` 已在发布清单里排除）。
+
+桌面上的「个人博客编辑器.cmd」是同一个入口；如果服务已经在跑，再双击它只会打开页面，不会重复启动。
 
 ## 说明
 
