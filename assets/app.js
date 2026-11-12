@@ -36,6 +36,11 @@
     return '#' + channels.join('');
   }
 
+  function number(value, fallback) {
+    var parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  }
+
   function applyAccent() {
     var theme = site.theme || {};
     var root = document.documentElement;
@@ -47,6 +52,19 @@
     }
     var background = dark ? (theme.bgDark || theme.bgLight) : (theme.bgLight || theme.bgDark);
     if (background) root.style.setProperty('--bg', background);
+    var rgb = hexToRgb(background || (dark ? '#0e1117' : '#ffffff')) || { r: 255, g: 255, b: 255 };
+    var cardAlpha = number(theme.cardAlpha, 72) / 100;
+    var dimAlpha = number(theme.bgDim, 0) / 100;
+    root.style.setProperty('--card-bg', 'rgba(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ', ' + cardAlpha + ')');
+    root.style.setProperty('--card-blur', number(theme.cardBlur, 12) + 'px');
+    root.style.setProperty('--card-radius', number(theme.cardRadius, 18) + 'px');
+    root.style.setProperty('--layout-width', number(theme.layoutWidth, 860) + 'px');
+    root.style.setProperty('--bg-blur', number(theme.bgBlur, 0) + 'px');
+    root.style.setProperty('--dim-bg', 'rgba(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ', ' + dimAlpha + ')');
+    root.style.setProperty('--rb-width', number(theme.rainbowWidth, 2) + 'px');
+    root.style.setProperty('--rb-speed', number(theme.rainbowSpeed, 9) + 's');
+    root.style.setProperty('--rb-alpha', String(number(theme.rainbowAlpha, 85) / 100));
+    root.classList.toggle('has-card-shadow', theme.cardShadow !== false);
     if (theme.bgImage) {
       var imageUrl = String(theme.bgImage);
       try { imageUrl = new URL(imageUrl, location.href).href; } catch (error) { /* 保留原值 */ }
