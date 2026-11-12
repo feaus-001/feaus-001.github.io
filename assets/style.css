@@ -320,8 +320,17 @@ html.has-bg-image main {
   margin-top: 20px;
   margin-bottom: 20px;
   border-radius: 18px;
-  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
+  backdrop-filter: blur(12px) saturate(1.1);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.16);
+}
+
+html.has-bg-image .site-header {
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  -webkit-backdrop-filter: blur(12px) saturate(1.1);
+  backdrop-filter: blur(12px) saturate(1.1);
+  border-radius: 0 0 18px 18px;
 }
 
 html.has-bg-image .site-footer {
