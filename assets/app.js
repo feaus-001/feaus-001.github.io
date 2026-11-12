@@ -14,6 +14,125 @@
     return sections[name] || fallback;
   }
 
+  function featureOn(name) {
+    var features = site.features || {};
+    return features[name] !== false;
+  }
+
+  // ---------------- 留言板 / 收信箱（GitHub Issues） ----------------
+  var ISSUE_REPO = 'feaus-001/feaus-001.github.io';
+  var ISSUE_URL = 'https://github.com/' + ISSUE_REPO + '/issues';
+
+  function clearIssuesCache() {
+    try { sessionStorage.removeItem('blog-issues'); } catch (error) { /* ignore */ }
+  }
+
+  function loadIssues() {
+    var cached = null;
+    try { cached = JSON.parse(sessionStorage.getItem('blog-issues') || 'null'); } catch (error) { /* ignore */ }
+    if (cached && Date.now() - cached.at < 5 * 60 * 1000) return Promise.resolve(cached.items);
+    return fetch('https://api.github.com/repos/' + ISSUE_REPO + '/issues?state=open&per_page=30&sort=created&direction=desc', {
+      headers: { accept: 'application/vnd.github+json' },
+    }).then(function (response) {
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      return response.json();
+    }).then(function (items) {
+      try { sessionStorage.setItem('blog-issues', JSON.stringify({ at: Date.now(), items: items })); } catch (error) { /* ignore */ }
+      return items;
+    });
+  }
+
+  function formatIssueDate(date) {
+    return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+  }
+
+  function fillIssues(mode) {
+    var list = document.getElementById('board-list');
+    if (!list) return;
+    list.innerHTML = '<p class="empty">正在读取…</p>';
+    loadIssues().then(function (items) {
+      if (!Array.isArray(items) || !items.length) {
+        list.innerHTML = '<p class="empty">还没有留言，来做第一个吧。</p>';
+        return;
+      }
+      var seen = 0;
+      try { seen = Number(localStorage.getItem('blog-inbox-seen') || 0); } catch (error) { /* ignore */ }
+      list.innerHTML = items.map(function (issue) {
+        var when = new Date(issue.created_at);
+        var unread = when.getTime() > seen;
+        var body = String(issue.body || '').trim();
+        if (body.length > 400) body = body.slice(0, 400) + '…';
+        return '<article class="board-item' + (mode === 'inbox' && unread ? ' is-unread' : '') + '">' +
+          '<header><span class="board-author">' + escapeHtml((issue.user && issue.user.login) || '匿名') + '</span>' +
+          '<span class="board-time">' + escapeHtml(formatIssueDate(when)) + '</span>' +
+          (mode === 'inbox' && unread ? '<span class="board-dot"></span>' : '') +
+          '</header>' +
+          '<h2 class="board-title">' + escapeHtml(issue.title || '') + '</h2>' +
+          '<p class="board-body">' + escapeHtml(body).replace(/\n/g, '<br>') + '</p>' +
+          '</article>';
+      }).join('');
+    }).catch(function () {
+      list.innerHTML = '<p class="empty">读取失败：GitHub API 可能被限流或暂时不可用，稍后再试。</p>';
+    });
+  }
+
+  function writeIssueUrl() {
+    var title = encodeURIComponent('[留言] ');
+    var body = encodeURIComponent('昵称：\n\n留言：\n');
+    return ISSUE_URL + '/new?title=' + title + '&body=' + body;
+  }
+
+  function boardActions(mode) {
+    return '<div class="board-actions">' +
+      (mode === 'guestbook'
+        ? '<a class="board-btn board-btn-primary" href="' + writeIssueUrl() + '" target="_blank" rel="noreferrer">✍ 写留言</a>'
+        : '<button type="button" class="board-btn" id="inbox-read">全部标为已读</button>') +
+      '<button type="button" class="board-btn" id="board-refresh">刷新</button>' +
+      '<a class="board-btn" href="' + ISSUE_URL + '" target="_blank" rel="noreferrer">在 GitHub 上打开</a>' +
+      '</div>';
+  }
+
+  function renderGuestbook() {
+    if (!featureOn('guestbook')) return '<p class="empty">留言板未开启。</p>';
+    return '<article class="article board">' +
+      '<a class="back-link" href="#/">← 返回文章列表</a>' +
+      '<h1 class="article-title">心尘山留言板</h1>' +
+      '<p class="board-hint">想说什么都可以留在这里。留言保存在 GitHub Issues 里，公开展示；写留言需要一个 GitHub 账号。</p>' +
+      boardActions('guestbook') +
+      '<div class="board-list" id="board-list"></div>' +
+      '</article>';
+  }
+
+  function renderInbox() {
+    if (!featureOn('inbox')) return '<p class="empty">收信箱未开启。</p>';
+    return '<article class="article board">' +
+      '<a class="back-link" href="#/">← 返回文章列表</a>' +
+      '<h1 class="article-title">收信箱</h1>' +
+      '<p class="board-hint">这里汇总留言板收到的来信（来自 GitHub Issues），新消息会有蓝点标记。</p>' +
+      boardActions('inbox') +
+      '<div class="board-list" id="board-list"></div>' +
+      '</article>';
+  }
+
+  function bindBoard(mode) {
+    fillIssues(mode);
+    var refresh = document.getElementById('board-refresh');
+    if (refresh) {
+      refresh.addEventListener('click', function () {
+        clearIssuesCache();
+        fillIssues(mode);
+      });
+    }
+    var read = document.getElementById('inbox-read');
+    if (read) {
+      read.addEventListener('click', function () {
+        try { localStorage.setItem('blog-inbox-seen', String(Date.now())); } catch (error) { /* ignore */ }
+        fillIssues(mode);
+      });
+    }
+  }
+
+
   function hexToRgb(hex) {
     var match = /^#?([a-f\d]{3}|[a-f\d]{6})$/i.exec(String(hex || '').trim());
     if (!match) return null;
@@ -228,6 +347,8 @@
         '<p class="hero-tagline">' + escapeHtml(site.tagline) + '</p>' +
         '<p class="hero-bio">' + escapeHtml(site.bio) + '</p>' +
         '<div class="hero-links">' + links() + '</div>' +
+        (featureOn('guestbook') ? '<div class="hero-links"><a class="chip" href="#/guestbook">留言板</a>' +
+          (featureOn('inbox') ? '<a class="chip" href="#/inbox">收信箱</a>' : '') + '</div>' : '') +
       '</section>'
     );
   }
@@ -297,6 +418,8 @@
     var hash = decodeURIComponent(location.hash.replace(/^#\/?/, ''));
     if (hash.indexOf('post/') === 0) return { view: 'post', slug: hash.slice(5) };
     if (hash === 'about') return { view: 'about' };
+    if (hash === 'guestbook') return { view: 'guestbook' };
+    if (hash === 'inbox') return { view: 'inbox' };
     return { view: 'list' };
   }
 
@@ -309,6 +432,14 @@
     } else if (route.view === 'about') {
       app.innerHTML = renderAbout();
       document.title = '关于 · ' + site.name;
+    } else if (route.view === 'guestbook') {
+      app.innerHTML = renderGuestbook();
+      document.title = '留言板 · ' + site.name;
+      bindBoard('guestbook');
+    } else if (route.view === 'inbox') {
+      app.innerHTML = renderInbox();
+      document.title = '收信箱 · ' + site.name;
+      bindBoard('inbox');
     } else {
       app.innerHTML = renderList();
       document.title = site.name + ' · ' + site.tagline;

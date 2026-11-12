@@ -10,8 +10,9 @@ window.BLOG = {
     sections: { posts: "文章", about: "刻言录" },
     theme: { accent: "#1f6feb", accentDark: "#789ef7", bgLight: "#ffffff", bgDark: "#000000", bgImage: "assets/bg.png", rainbow: true, rainbowWidth: 3, rainbowSpeed: 3, rainbowAlpha: 100, cardAlpha: 11, cardBlur: 0, cardRadius: 0, cardShadow: true, layoutWidth: 720, bgBlur: 0, bgDim: 0, textLight: "#ff0000", textDark: "#e6e9ef", mutedLight: "#ff0000", mutedDark: "#ff9500" },
     links: [{ label: "GitHub", href: "https://github.com/feaus-001" }, { label: "邮箱", href: "https://mail.google.com/mail/?view=cm&fs=1&to=052626000abc%40gmail.com" }],
-    music: { enabled: true, tracks: [{ title: "金魚。坏天氣", artist: "奶皇 / topkingcream", src: "assets/music/jinyu-bad-weather.mp3" }] },
+    music: { enabled: true, tracks: [{ title: "傘", artist: "奶皇 / topkingcream", src: "assets/music/song-01.mp3" }, { title: "四海五洲", artist: "奶皇 / topkingcream", src: "assets/music/song-02.mp3" }, { title: "快把皮球踢到百貨商場", artist: "奶皇 / topkingcream", src: "assets/music/song-03.mp3" }, { title: "文藝b抑鬱的理由", artist: "奶皇 / topkingcream", src: "assets/music/song-04.mp3" }, { title: "發條玩具烏龜", artist: "奶皇 / topkingcream", src: "assets/music/song-05.mp3" }, { title: "白色風車", artist: "奶皇 / topkingcream", src: "assets/music/song-06.mp3" }, { title: "草坪", artist: "奶皇 / topkingcream", src: "assets/music/song-07.mp3" }, { title: "金魚。坏天氣", artist: "奶皇 / topkingcream", src: "assets/music/song-08.mp3" }, { title: "關於那些被我丟掉的東西", artist: "奶皇 / topkingcream", src: "assets/music/song-09.mp3" }] },
     decor: { meteors: true, seasons: true, progress: true, backToTop: true, calendar: true },
+    features: { guestbook: true, inbox: true },
   },
   posts: [
     {

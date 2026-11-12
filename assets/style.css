@@ -631,6 +631,90 @@ button.decor-cal-day { cursor: pointer; }
   .decor-canvas { opacity: 0.8; }
 }
 
+/* 开场动画 */
+html.intro-active body { overflow: hidden; }
+
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fbfbfd;
+  transition: opacity 0.9s ease;
+}
+.intro.is-out { opacity: 0; pointer-events: none; }
+
+.intro-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.intro-title {
+  position: relative;
+  width: min(86vw, 900px);
+  height: auto;
+  image-rendering: pixelated;
+  opacity: 0;
+  animation: intro-title-in 1.6s ease forwards 0.15s;
+}
+
+@keyframes intro-title-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+html.intro-done .site-header,
+html.intro-done main,
+html.intro-done .site-footer {
+  animation: site-in 0.9s ease both;
+}
+
+@keyframes site-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 留言板 / 收信箱 */
+.board { max-width: 720px; }
+.board-hint { margin: 6px 0 18px; color: var(--muted); font-size: 13.5px; line-height: 1.7; }
+.board-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.board-btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: none;
+}
+.board-btn:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+.board-btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.board-btn-primary:hover { color: #fff; filter: brightness(1.05); }
+.board-list { display: flex; flex-direction: column; gap: 12px; }
+.board-item {
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+}
+.board-item.is-unread { border-color: var(--accent); }
+.board-item header { display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--muted); }
+.board-author { font-weight: 600; color: var(--fg); }
+.board-time { margin-left: auto; font-variant-numeric: tabular-nums; }
+.board-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.board-title { margin: 8px 0 6px; font-size: 16px; font-weight: 650; line-height: 1.4; }
+.board-body { margin: 0; font-size: 14px; line-height: 1.7; color: var(--muted); overflow-wrap: anywhere; }
+
 @keyframes rb-spin {
   to { --rb-angle: 360deg; }
 }

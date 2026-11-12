@@ -131,6 +131,7 @@
     var theme = site.theme || {};
     var music = site.music || {};
     var decor = site.decor || {};
+    var features = site.features || {};
     var out = [];
     out.push('/* 站点配置与文章数据。改这里就能更新博客，不需要构建工具。 */');
     out.push('window.BLOG = {');
@@ -169,6 +170,7 @@
     out.push('    decor: { meteors: ' + (decor.meteors !== false) + ', seasons: ' + (decor.seasons !== false) +
       ', progress: ' + (decor.progress !== false) + ', backToTop: ' + (decor.backToTop !== false) +
       ', calendar: ' + (decor.calendar !== false) + ' },');
+    out.push('    features: { guestbook: ' + (features.guestbook !== false) + ', inbox: ' + (features.inbox !== false) + ' },');
     out.push('  },');
     out.push('  posts: [');
     posts.forEach(function (post) {
