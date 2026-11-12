@@ -303,13 +303,17 @@ main {
   .post-card { padding: 16px; }
 }
 
-/* 自定义背景图 */
-html.has-bg-image body {
+/* 自定义背景图：画在根元素上，body 用半透明底色保证文字可读 */
+html.has-bg-image {
   background-image: var(--bg-image);
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
   background-repeat: no-repeat;
+}
+
+html.has-bg-image body {
+  background: color-mix(in srgb, var(--bg) 55%, transparent);
 }
 
 /* 窗口内圈的彩虹流光描边 */
