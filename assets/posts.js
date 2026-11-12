@@ -1,15 +1,15 @@
 /* 站点配置与文章数据。改这里就能更新博客，不需要构建工具。 */
 window.BLOG = {
   site: {
-    name: "XinChen",
-    tagline: "写点技术、折腾和日常",
-    bio: "在 DeepSeek Harness 里折腾插件的人。喜欢把界面改成自己喜欢的样子，也喜欢研究一条鱼为什么会被叫成大肥鱼。",
+    name: "心尘山总站",
+    tagline: "为人民服务⭐",
+    bio: "“我们从来没靠过别人，我们只是靠自己这双手” —心辰Stellan",
     avatar: "assets/fish.png",
     about: "",
-    footer: "© 2026 XinChen",
+    footer: "© 2026 by.XinChen",
     sections: { posts: "文章", about: "关于" },
-    theme: { accent: "#1f6feb", accentDark: "#7aa2ff" },
-    links: [{ label: "GitHub", href: "https://github.com/feaus-001" }, { label: "邮箱", href: "mailto:you@example.com" }],
+    theme: { accent: "#1f6feb", accentDark: "#789ef7" },
+    links: [{ label: "GitHub", href: "https://github.com/feaus-001" }, { label: "邮箱", href: "052626000abc@gmail.com" }],
   },
   posts: [
     {
