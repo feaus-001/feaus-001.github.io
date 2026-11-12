@@ -104,7 +104,7 @@
       accept: 'application/json',
       'content-type': 'application/json',
     };
-    if (opts.method === 'POST') headers.prefer = 'return=representation';
+    if (opts.method === 'POST') headers.prefer = 'return=minimal';
     return fetch(String(SB.url).replace(/\/+$/, '') + '/rest/v1' + path, {
       method: opts.method || 'GET',
       headers: headers,
