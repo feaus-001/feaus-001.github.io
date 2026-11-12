@@ -330,14 +330,16 @@ main {
   .post-meta { font-size: 12px; }
 }
 
-/* 背景图：根元素伪元素承载，支持模糊与压暗 */
+/* 背景图：body 伪元素承载（支持模糊与压暗），内容整体抬到上层 */
 html.has-bg-image { background-image: none; }
 
-html.has-bg-image::before {
+html.has-bg-image body { background: transparent; }
+
+html.has-bg-image body::before {
   content: '';
   position: fixed;
-  inset: -20px;
-  z-index: -2;
+  inset: -24px;
+  z-index: 0;
   background-image: var(--bg-image);
   background-size: cover;
   background-position: center;
@@ -346,16 +348,11 @@ html.has-bg-image::before {
   pointer-events: none;
 }
 
-html.has-bg-image::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: var(--dim-bg, transparent);
-  pointer-events: none;
+html.has-bg-image main,
+html.has-bg-image .site-footer {
+  position: relative;
+  z-index: 1;
 }
-
-html.has-bg-image body { background: transparent; }
 
 html.has-bg-image main {
   margin-top: 0;

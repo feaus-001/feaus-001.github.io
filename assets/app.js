@@ -72,7 +72,12 @@
     if (theme.bgImage) {
       var imageUrl = String(theme.bgImage);
       try { imageUrl = new URL(imageUrl, location.href).href; } catch (error) { /* 保留原值 */ }
-      root.style.setProperty('--bg-image', 'url("' + imageUrl.replace(/"/g, '%22') + '")');
+      var dim = number(theme.bgDim, 0) / 100;
+      var overlay = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + dim + ')';
+      root.style.setProperty(
+        '--bg-image',
+        'linear-gradient(' + overlay + ',' + overlay + '),url("' + imageUrl.replace(/"/g, '%22') + '")',
+      );
       root.classList.add('has-bg-image');
     } else {
       root.classList.remove('has-bg-image');
