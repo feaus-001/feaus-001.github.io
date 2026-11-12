@@ -461,6 +461,17 @@ html.rainbow-frame body::after {
 
 .music-player[data-playing='true'] { border-color: var(--accent); }
 
+.music-player[data-blocked='true'] .mp-play {
+  border-color: var(--accent);
+  color: var(--accent);
+  animation: mp-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes mp-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
 .mp-btn {
   appearance: none;
   flex: none;

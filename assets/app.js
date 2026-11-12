@@ -432,7 +432,25 @@
       titleEl.textContent = '音频加载失败：' + (tracks[index].title || tracks[index].src);
     });
 
+    function tryAutoplay() {
+      audio.play().then(function () {
+        root.removeAttribute('data-blocked');
+      }).catch(function () {
+        // 浏览器禁止自动播放：提示一下，并等用户第一次点击/按键时开始
+        root.setAttribute('data-blocked', 'true');
+        function resume() {
+          document.removeEventListener('pointerdown', resume);
+          document.removeEventListener('keydown', resume);
+          audio.play().catch(function () { /* ignore */ });
+          root.removeAttribute('data-blocked');
+        }
+        document.addEventListener('pointerdown', resume);
+        document.addEventListener('keydown', resume);
+      });
+    }
+
     load(0, false);
+    tryAutoplay();
   }
 
   function checkBuild() {
