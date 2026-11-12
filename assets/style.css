@@ -737,6 +737,15 @@ html.intro-done .site-footer {
 .terms p { margin: 0 0 10px; color: var(--muted); font-size: 14.5px; line-height: 1.8; }
 .footer-link { color: inherit; text-decoration: none; }
 .footer-link:hover { color: var(--accent); }
+
+.brand { display: inline-flex; align-items: center; gap: 8px; }
+.brand-mark {
+  width: 26px;
+  height: 26px;
+  display: block;
+  border-radius: 7px;
+  image-rendering: pixelated;
+}
 .board-title { margin: 8px 0 6px; font-size: 16px; font-weight: 650; line-height: 1.4; }
 .board-body { margin: 0; font-size: 14px; line-height: 1.7; color: var(--muted); overflow-wrap: anywhere; }
 

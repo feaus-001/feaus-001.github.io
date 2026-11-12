@@ -513,7 +513,10 @@
 
   function applySiteChrome() {
     var brand = document.querySelector('.brand');
-    if (brand && site.name) brand.textContent = site.name;
+    if (brand && site.name) {
+      brand.innerHTML = '<img class="brand-mark" src="assets/logo/emblem-256.png" alt="" width="26" height="26">' +
+        escapeHtml(site.name);
+    }
     var navLinks = document.querySelectorAll('.nav-link');
     if (navLinks[0]) navLinks[0].textContent = sectionLabel('posts', '文章');
     if (navLinks[1]) navLinks[1].textContent = sectionLabel('about', '关于');
