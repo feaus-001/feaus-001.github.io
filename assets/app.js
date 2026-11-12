@@ -92,13 +92,65 @@
       '</div>';
   }
 
+  var GUEST_KEY = 'blog-guestbook';
+
+  function readGuest() {
+    try {
+      var list = JSON.parse(localStorage.getItem(GUEST_KEY) || '[]');
+      return Array.isArray(list) ? list : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function writeGuest(list) {
+    try { localStorage.setItem(GUEST_KEY, JSON.stringify(list)); } catch (error) { /* ignore */ }
+  }
+
+  function guestListHtml(mode) {
+    var list = readGuest();
+    if (!list.length) return '<p class="empty">还没有留言，来写第一条吧。</p>';
+    var seen = 0;
+    try { seen = Number(localStorage.getItem('blog-inbox-seen') || 0); } catch (error) { /* ignore */ }
+    return list.slice().reverse().map(function (item) {
+      var unread = mode === 'inbox' && Number(item.at) > seen;
+      return '<article class="board-item' + (unread ? ' is-unread' : '') + '">' +
+        '<header><span class="board-author">' + escapeHtml(item.name || '匿名') + '</span>' +
+        '<span class="board-time">' + escapeHtml(formatIssueDate(new Date(item.at))) + '</span>' +
+        (unread ? '<span class="board-dot"></span>' : '') +
+        '</header>' +
+        '<p class="board-body">' + escapeHtml(item.text || '').replace(/\n/g, '<br>') + '</p>' +
+        '</article>';
+    }).join('');
+  }
+
+  function refreshGuestList(mode) {
+    var list = document.getElementById('board-list');
+    if (list) list.innerHTML = guestListHtml(mode);
+  }
+
+  function gmailUrl(content) {
+    var to = '052626000abc@gmail.com';
+    return 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(to) +
+      '&su=' + encodeURIComponent('[心尘山留言板]') +
+      '&body=' + encodeURIComponent(content || '');
+  }
+
   function renderGuestbook() {
     if (!featureOn('guestbook')) return '<p class="empty">留言板未开启。</p>';
     return '<article class="article board">' +
       '<a class="back-link" href="#/">← 返回文章列表</a>' +
       '<h1 class="article-title">心尘山留言板</h1>' +
-      '<p class="board-hint">想说什么都可以留在这里。留言保存在 GitHub Issues 里，公开展示；写留言需要一个 GitHub 账号。</p>' +
-      boardActions('guestbook') +
+      '<p class="board-hint">随手留一句吧。当前是纯静态站点，留言先保存在你自己的浏览器里；点「邮件发给站长」可以把内容直接发到站长的 Gmail。</p>' +
+      '<form class="board-form" id="board-form">' +
+        '<input id="board-name" class="board-input" maxlength="20" placeholder="昵称（可留空）">' +
+        '<textarea id="board-text" class="board-input" rows="3" maxlength="500" placeholder="想说的话…"></textarea>' +
+        '<div class="board-form-actions">' +
+          '<button type="submit" class="board-btn board-btn-primary">发表留言</button>' +
+          '<a class="board-btn" id="board-mail" href="#" target="_blank" rel="noreferrer">邮件发给站长</a>' +
+          '<span class="board-status" id="board-status"></span>' +
+        '</div>' +
+      '</form>' +
       '<div class="board-list" id="board-list"></div>' +
       '</article>';
   }
@@ -108,26 +160,67 @@
     return '<article class="article board">' +
       '<a class="back-link" href="#/">← 返回文章列表</a>' +
       '<h1 class="article-title">收信箱</h1>' +
-      '<p class="board-hint">这里汇总留言板收到的来信（来自 GitHub Issues），新消息会有蓝点标记。</p>' +
-      boardActions('inbox') +
+      '<p class="board-hint">这里汇总你在这台浏览器里留下的留言，新消息会带蓝点。想让站长真正收到，点「邮件发给站长」。</p>' +
+      '<div class="board-actions">' +
+        '<button type="button" class="board-btn" id="inbox-read">全部标为已读</button>' +
+        '<button type="button" class="board-btn" id="inbox-clear">清空本机留言</button>' +
+        '<a class="board-btn" href="' + gmailUrl('') + '" target="_blank" rel="noreferrer">打开 Gmail 收件箱</a>' +
+      '</div>' +
       '<div class="board-list" id="board-list"></div>' +
       '</article>';
   }
 
   function bindBoard(mode) {
-    fillIssues(mode);
-    var refresh = document.getElementById('board-refresh');
-    if (refresh) {
-      refresh.addEventListener('click', function () {
-        clearIssuesCache();
-        fillIssues(mode);
+    if (mode === 'guestbook') {
+      var form = document.getElementById('board-form');
+      var status = document.getElementById('board-status');
+      var mail = document.getElementById('board-mail');
+      function syncMail() {
+        var name = (document.getElementById('board-name').value || '').trim();
+        var text = (document.getElementById('board-text').value || '').trim();
+        mail.href = gmailUrl((name ? name + '：\n\n' : '') + text);
+      }
+      if (form) {
+        form.addEventListener('submit', function (event) {
+          event.preventDefault();
+          var name = (document.getElementById('board-name').value || '').trim();
+          var text = (document.getElementById('board-text').value || '').trim();
+          if (!text) {
+            if (status) status.textContent = '先写点什么吧';
+            return;
+          }
+          var list = readGuest();
+          list.push({ name: name, text: text, at: Date.now() });
+          writeGuest(list);
+          document.getElementById('board-text').value = '';
+          refreshGuestList('guestbook');
+          syncMail();
+          if (status) status.textContent = '已发布（保存在本机浏览器）';
+        });
+      }
+      ['board-name', 'board-text'].forEach(function (id) {
+        var input = document.getElementById(id);
+        if (input) input.addEventListener('input', syncMail);
       });
+      syncMail();
+      refreshGuestList('guestbook');
+      return;
     }
+
+    refreshGuestList(mode);
     var read = document.getElementById('inbox-read');
     if (read) {
       read.addEventListener('click', function () {
         try { localStorage.setItem('blog-inbox-seen', String(Date.now())); } catch (error) { /* ignore */ }
-        fillIssues(mode);
+        refreshGuestList(mode);
+      });
+    }
+    var clear = document.getElementById('inbox-clear');
+    if (clear) {
+      clear.addEventListener('click', function () {
+        if (!window.confirm('清空本机保存的留言？')) return;
+        writeGuest([]);
+        refreshGuestList(mode);
       });
     }
   }
@@ -198,8 +291,15 @@
         'linear-gradient(' + overlay + ',' + overlay + '),url("' + imageUrl.replace(/"/g, '%22') + '")',
       );
       root.classList.add('has-bg-image');
+      if (!document.querySelector('.bg-scrim')) {
+        var scrim = document.createElement('div');
+        scrim.className = 'bg-scrim';
+        document.body.insertBefore(scrim, document.body.firstChild);
+      }
     } else {
       root.classList.remove('has-bg-image');
+      var existing = document.querySelector('.bg-scrim');
+      if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
     }
     root.classList.toggle('rainbow-frame', theme.rainbow !== false);
   }

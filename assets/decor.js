@@ -67,7 +67,28 @@
     var height = 0;
     var particles = [];
     var meteors = [];
+    var ribbons = [];
+    var sparks = [];
     var running = true;
+    var ribbonColors = ['#ff6b6b', '#ffd93d', '#4d96ff', '#6bcb77', '#b06bff', '#ff6bd6', '#ff9f43', '#00c2a8'];
+
+    function seedRibbons() {
+      ribbons = [];
+      var count = width < 720 ? 48 : 96;
+      for (var i = 0; i < count; i++) {
+        ribbons.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          w: 2 + Math.random() * 4,
+          h: 8 + Math.random() * 14,
+          color: ribbonColors[Math.floor(Math.random() * ribbonColors.length)],
+          speed: 0.7 + Math.random() * 1.8,
+          drift: (Math.random() - 0.5) * 0.9,
+          angle: Math.random() * Math.PI,
+          spin: (Math.random() - 0.5) * 0.06,
+        });
+      }
+    }
 
     function resize() {
       var ratio = Math.min(window.devicePixelRatio || 1, 2);
@@ -157,8 +178,41 @@
         drawParticle(p);
       }
 
-      for (var j = meteors.length - 1; j >= 0; j--) {
-        var m = meteors[j];
+      for (var r = 0; r < ribbons.length; r++) {
+        var b = ribbons[r];
+        b.y += b.speed;
+        b.x += b.drift + Math.sin((b.y + b.x) * 0.01) * 0.3;
+        b.angle += b.spin;
+        if (b.y > height + 24) { b.y = -24; b.x = Math.random() * width; }
+        if (b.x < -24) b.x = width + 24;
+        if (b.x > width + 24) b.x = -24;
+        ctx.save();
+        ctx.translate(b.x, b.y);
+        ctx.rotate(b.angle);
+        ctx.fillStyle = b.color;
+        ctx.globalAlpha = 0.9;
+        ctx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h);
+        ctx.restore();
+      }
+
+      for (var s = sparks.length - 1; s >= 0; s--) {
+        var sp = sparks[s];
+        sp.x += sp.vx;
+        sp.y += sp.vy;
+        sp.vy += 0.12;
+        sp.vx *= 0.98;
+        sp.life -= 0.02;
+        if (sp.life <= 0) {
+          sparks.splice(s, 1);
+          continue;
+        }
+        ctx.globalAlpha = Math.max(0, sp.life);
+        ctx.fillStyle = sp.color;
+        ctx.fillRect(sp.x, sp.y, 3, 3);
+      }
+      ctx.globalAlpha = 1;
+
+      for (var j = meteors.length - 1; j >= 0; j--) {        var m = meteors[j];
         m.x += m.speed;
         m.y += m.speed * 0.55;
         m.life -= 0.008;
@@ -183,9 +237,25 @@
 
     resize();
     seed();
+    seedRibbons();
+    document.addEventListener('pointerdown', function (event) {
+      for (var i = 0; i < 18; i++) {
+        var angle = Math.random() * Math.PI * 2;
+        var speed = 1.5 + Math.random() * 4;
+        sparks.push({
+          x: event.clientX,
+          y: event.clientY,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 1,
+          life: 1,
+          color: ribbonColors[Math.floor(Math.random() * ribbonColors.length)],
+        });
+      }
+    });
     window.addEventListener('resize', function () {
       resize();
       seed();
+      seedRibbons();
     });
     document.addEventListener('visibilitychange', function () {
       if (document.hidden) {
