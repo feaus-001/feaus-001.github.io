@@ -8,7 +8,7 @@ window.BLOG = {
     about: "",
     footer: "© 2026 by.XinChen",
     sections: { posts: "文章", about: "关于" },
-    theme: { accent: "#1f6feb", accentDark: "#789ef7", bgLight: "#ffffff", bgDark: "#0e1117", bgImage: "assets/bg.jpg", rainbow: true, rainbowWidth: 2, rainbowSpeed: 9, rainbowAlpha: 85, cardAlpha: 72, cardBlur: 12, cardRadius: 18, cardShadow: true, layoutWidth: 860, bgBlur: 0, bgDim: 0 },
+    theme: { accent: "#1f6feb", accentDark: "#789ef7", bgLight: "#ffffff", bgDark: "#0e1117", bgImage: "assets/bg.jpg", rainbow: true, rainbowWidth: 3, rainbowSpeed: 3, rainbowAlpha: 100, cardAlpha: 27, cardBlur: 7, cardRadius: 0, cardShadow: true, layoutWidth: 720, bgBlur: 0, bgDim: 0 },
     links: [{ label: "GitHub", href: "https://github.com/feaus-001" }, { label: "邮箱", href: "052626000abc@gmail.com" }],
   },
   posts: [
