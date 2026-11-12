@@ -52,6 +52,10 @@
     }
     var background = dark ? (theme.bgDark || theme.bgLight) : (theme.bgLight || theme.bgDark);
     if (background) root.style.setProperty('--bg', background);
+    var textColor = dark ? (theme.textDark || theme.textLight) : (theme.textLight || theme.textDark);
+    if (textColor) root.style.setProperty('--fg', textColor);
+    var mutedColor = dark ? (theme.mutedDark || theme.mutedLight) : (theme.mutedLight || theme.mutedDark);
+    if (mutedColor) root.style.setProperty('--muted', mutedColor);
     var rgb = hexToRgb(background || (dark ? '#0e1117' : '#ffffff')) || { r: 255, g: 255, b: 255 };
     var cardAlpha = number(theme.cardAlpha, 72) / 100;
     var dimAlpha = number(theme.bgDim, 0) / 100;
@@ -341,6 +345,91 @@
     });
   }
 
+  function setupMusic() {
+    var music = site.music;
+    if (!music || music.enabled === false) return;
+    var tracks = (music.tracks || []).filter(function (track) { return track && track.src; });
+    if (!tracks.length) return;
+
+    var audio = document.createElement('audio');
+    audio.preload = 'none';
+    audio.style.display = 'none';
+    document.body.appendChild(audio);
+
+    var root = document.createElement('div');
+    root.className = 'music-player';
+    root.innerHTML =
+      '<button type="button" class="mp-btn mp-prev" aria-label="上一首">⏮</button>' +
+      '<button type="button" class="mp-btn mp-play" aria-label="播放">▶</button>' +
+      '<span class="mp-info"><span class="mp-title"></span><span class="mp-time">0:00 / 0:00</span></span>' +
+      '<input class="mp-progress" type="range" min="0" max="1000" value="0" aria-label="播放进度">' +
+      '<button type="button" class="mp-btn mp-next" aria-label="下一首">⏭</button>';
+    document.body.appendChild(root);
+
+    var titleEl = root.querySelector('.mp-title');
+    var timeEl = root.querySelector('.mp-time');
+    var playBtn = root.querySelector('.mp-play');
+    var progress = root.querySelector('.mp-progress');
+    var index = 0;
+    var dragging = false;
+
+    function formatTime(seconds) {
+      var value = Number.isFinite(seconds) && seconds > 0 ? seconds : 0;
+      var minutes = Math.floor(value / 60);
+      var rest = Math.floor(value % 60);
+      return minutes + ':' + String(rest).padStart(2, '0');
+    }
+
+    function load(indexToLoad, play) {
+      index = (indexToLoad + tracks.length) % tracks.length;
+      var track = tracks[index];
+      audio.src = track.src;
+      titleEl.textContent = [track.title, track.artist].filter(Boolean).join(' · ') || track.src;
+      audio.load();
+      if (play) audio.play().catch(function () { /* 浏览器可能拒绝播放 */ });
+    }
+
+    function updateButton() {
+      var playing = !audio.paused && !audio.ended;
+      playBtn.textContent = playing ? '⏸' : '▶';
+      playBtn.setAttribute('aria-label', playing ? '暂停' : '播放');
+      root.setAttribute('data-playing', String(playing));
+    }
+
+    function updateProgress() {
+      var duration = audio.duration || 0;
+      var current = audio.currentTime || 0;
+      if (!dragging && duration > 0) progress.value = String(Math.round((current / duration) * 1000));
+      timeEl.textContent = formatTime(current) + ' / ' + formatTime(duration);
+    }
+
+    playBtn.addEventListener('click', function () {
+      if (!audio.src) {
+        load(index, true);
+        return;
+      }
+      if (audio.paused) audio.play().catch(function () { /* ignore */ });
+      else audio.pause();
+    });
+    root.querySelector('.mp-prev').addEventListener('click', function () { load(index - 1, true); });
+    root.querySelector('.mp-next').addEventListener('click', function () { load(index + 1, true); });
+    progress.addEventListener('input', function () { dragging = true; });
+    progress.addEventListener('change', function () {
+      dragging = false;
+      if (audio.duration) audio.currentTime = (Number(progress.value) / 1000) * audio.duration;
+    });
+    audio.addEventListener('play', updateButton);
+    audio.addEventListener('pause', updateButton);
+    audio.addEventListener('ended', function () { load(index + 1, true); });
+    audio.addEventListener('timeupdate', updateProgress);
+    audio.addEventListener('loadedmetadata', updateProgress);
+    audio.addEventListener('error', function () {
+      titleEl.textContent = '音频加载失败：' + (tracks[index].title || tracks[index].src);
+    });
+
+    load(0, false);
+  }
+
   function checkBuild() {
     var meta = document.querySelector('meta[name="site-build"]');
     if (!meta) return;
@@ -365,5 +454,6 @@
   applySiteChrome();
   applyTheme(preferredTheme());
   render();
+  setupMusic();
   checkBuild();
 })();
