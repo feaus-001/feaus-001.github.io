@@ -125,10 +125,12 @@
   function normalizeRows(rows) {
     return (rows || []).map(function (row) {
       return {
+        id: row.id,
         name: row.name || '匿名',
         body: row.body != null ? row.body : (row.text || ''),
         at: row.created_at ? new Date(row.created_at).getTime() : (Number(row.at) || Date.now()),
         private: !!row.private,
+        approved: row.approved !== false,
       };
     });
   }
@@ -152,13 +154,24 @@
     try { seen = Number(localStorage.getItem('blog-inbox-seen') || 0); } catch (error) { /* ignore */ }
     return rows.slice().sort(function (a, b) { return b.at - a.at; }).map(function (row) {
       var unread = mode === 'inbox' && row.at > seen;
+      var pending = row.approved === false;
+      var tag = row.private
+        ? '<span class="board-tag">私密</span>'
+        : (pending ? '<span class="board-tag board-tag-pending">待审核</span>' : '');
+      var actions = (mode === 'inbox' && row.id)
+        ? '<div class="board-item-actions">' +
+          (pending ? '<button type="button" class="board-btn board-btn-sm" data-action="approve" data-id="' + row.id + '">通过</button>' : '') +
+          '<button type="button" class="board-btn board-btn-sm" data-action="delete" data-id="' + row.id + '">删除</button>' +
+          '</div>'
+        : '';
       return '<article class="board-item' + (unread ? ' is-unread' : '') + '">' +
         '<header><span class="board-author">' + escapeHtml(row.name) + '</span>' +
-        (row.private ? '<span class="board-tag">私密</span>' : '') +
+        tag +
         '<span class="board-time">' + escapeHtml(formatIssueDate(new Date(row.at))) + '</span>' +
         (unread ? '<span class="board-dot"></span>' : '') +
         '</header>' +
         '<p class="board-body">' + escapeHtml(String(row.body)).replace(/\n/g, '<br>') + '</p>' +
+        actions +
         '</article>';
     }).join('');
   }
@@ -171,9 +184,15 @@
       return;
     }
     list.innerHTML = '<p class="empty">正在读取…</p>';
-    var request = mode === 'inbox'
-      ? sbRequest('/rpc/read_inbox', { method: 'POST', body: { pass: sessionStorage.getItem('blog-inbox-pin') || '' } })
-      : sbRequest('/messages?select=name,body,private,created_at&private=eq.false&order=created_at.desc&limit=60');
+    var request;
+    if (mode === 'inbox') {
+      request = sbRequest('/rpc/read_inbox', { method: 'POST', body: { pass: sessionStorage.getItem('blog-inbox-pin') || '' } });
+    } else {
+      request = sbRequest('/messages?select=id,name,body,private,approved,created_at&private=eq.false&approved=eq.true&order=created_at.desc&limit=60')
+        .catch(function () {
+          return sbRequest('/messages?select=name,body,private,created_at&private=eq.false&order=created_at.desc&limit=60');
+        });
+    }
     request.then(function (rows) {
       list.innerHTML = rowsHtml(normalizeRows(rows), mode);
     }).catch(function (error) {
@@ -194,7 +213,7 @@
       '<a class="back-link" href="#/">← 返回文章列表</a>' +
       '<h1 class="article-title">心尘山留言板</h1>' +
       '<p class="board-hint">' + (SUPABASE_ON
-        ? '留言所有人可见。写点什么吧，站长会看到。'
+        ? '留言提交后需要站长审核通过才会公开显示；违规内容会被删除。详见 <a href="#/terms">声明与规则</a>。'
         : '还没接后端：留言暂时只存在你自己的浏览器里。接上 Supabase 后，所有人写、所有人看。') + '</p>' +
       '<form class="board-form" id="board-form">' +
         '<input id="board-name" class="board-input" maxlength="20" placeholder="昵称（可留空）">' +
@@ -207,6 +226,21 @@
         '</div>' +
       '</form>' +
       '<div class="board-list" id="board-list"></div>' +
+      '</article>';
+  }
+
+  function renderTerms() {
+    return '<article class="article terms">' +
+      '<a class="back-link" href="#/">← 返回首页</a>' +
+      '<h1 class="article-title">声明与规则</h1>' +
+      '<h2>版权声明</h2>' +
+      '<p>本站为非商业个人博客，文章除特别注明外均为站长原创，转载请注明出处。站内背景图、头像、音乐等素材版权归原作者所有，仅作个人欣赏；如权利人认为侵权，请通过邮箱联系站长，我会第一时间删除。</p>' +
+      '<h2>留言规则</h2>' +
+      '<p>留言须经站长审核通过后公开展示。请勿发布违法、侵权、广告、辱骂、人身攻击、色情、暴力或涉及他人隐私的内容；违规留言将被直接删除，必要时保留追究责任的权利。</p>' +
+      '<h2>隐私说明</h2>' +
+      '<p>留言会保存昵称和内容并公开展示（勾选「仅站长可见」的不公开）。本站不采集访客的其他个人信息，不使用统计追踪；如需删除自己的留言，请联系站长。</p>' +
+      '<h2>免责</h2>' +
+      '<p>本站内容仅供学习交流，不构成任何专业建议；外链内容由第三方提供，本站不承担责任。</p>' +
       '</article>';
   }
 
@@ -234,7 +268,7 @@
       '<a class="back-link" href="#/">← 返回文章列表</a>' +
       '<h1 class="article-title">收信箱</h1>' +
       '<p class="board-hint">' + (SUPABASE_ON
-        ? '这里能看到所有留言，包括标记为私密的。'
+        ? '这里是全部留言（含待审核）。「通过」后才会公开显示，「删除」直接移除。'
         : '这里汇总这台浏览器里的留言；接上 Supabase 后可显示全部来信。') + '</p>' +
       '<div class="board-actions">' +
         '<button type="button" class="board-btn" id="inbox-read">全部标为已读</button>' +
@@ -273,7 +307,7 @@
                 document.getElementById('board-text').value = '';
                 if (privateBox) privateBox.checked = false;
                 syncMail();
-                if (status) status.textContent = isPrivate ? '已发送，只有站长能看到' : '已发布，所有人可见';
+                if (status) status.textContent = isPrivate ? '已发送，只有站长能看到' : '已提交，等站长审核后显示';
                 refreshBoard('guestbook');
               })
               .catch(function (error) {
@@ -338,6 +372,28 @@
       read.addEventListener('click', function () {
         try { localStorage.setItem('blog-inbox-seen', String(Date.now())); } catch (error) { /* ignore */ }
         refreshBoard(mode);
+      });
+    }
+    var boardList = document.getElementById('board-list');
+    if (boardList && SUPABASE_ON) {
+      boardList.addEventListener('click', function (event) {
+        var button = event.target.closest ? event.target.closest('button[data-action]') : null;
+        if (!button) return;
+        var pass = sessionStorage.getItem('blog-inbox-pin') || '';
+        button.disabled = true;
+        sbRequest('/rpc/moderate', {
+          method: 'POST',
+          body: { pass: pass, msg_id: Number(button.getAttribute('data-id')), action: button.getAttribute('data-action') },
+        }).then(function (ok) {
+          if (ok === true) refreshBoard(mode);
+          else if (window.confirm('操作失败：口令可能已改。要清空本机记录重新登录吗？')) {
+            sessionStorage.removeItem('blog-inbox-unlocked');
+            render();
+          }
+        }).catch(function (error) {
+          window.alert('操作失败：' + (error.message || '网络错误') + '\n（如果提示函数不存在，请先运行 supabase-moderation.sql）');
+          button.disabled = false;
+        });
       });
     }
     var clear = document.getElementById('inbox-clear');
@@ -643,6 +699,7 @@
     if (hash === 'about') return { view: 'about' };
     if (hash === 'guestbook') return { view: 'guestbook' };
     if (hash === 'inbox') return { view: 'inbox' };
+    if (hash === 'terms') return { view: 'terms' };
     return { view: 'list' };
   }
 
@@ -663,6 +720,9 @@
       app.innerHTML = renderInbox();
       document.title = '收信箱 · ' + site.name;
       bindBoard('inbox');
+    } else if (route.view === 'terms') {
+      app.innerHTML = renderTerms();
+      document.title = '声明与规则 · ' + site.name;
     } else {
       app.innerHTML = renderList();
       document.title = site.name + ' · ' + site.tagline;

@@ -727,6 +727,15 @@ html.intro-done .site-footer {
 .board-time { margin-left: auto; font-variant-numeric: tabular-nums; }
 .board-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
 .board-tag { padding: 1px 7px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 11px; }
+.board-tag-pending { background: #fff3cd; color: #8a6d3b; }
+.board-item-actions { display: flex; gap: 8px; margin-top: 10px; }
+.board-btn-sm { padding: 4px 10px; font-size: 12px; }
+
+.terms h2 { margin: 24px 0 8px; font-size: 17px; }
+.terms h2:first-of-type { margin-top: 18px; }
+.terms p { margin: 0 0 10px; color: var(--muted); font-size: 14.5px; line-height: 1.8; }
+.footer-link { color: inherit; text-decoration: none; }
+.footer-link:hover { color: var(--accent); }
 .board-title { margin: 8px 0 6px; font-size: 16px; font-weight: 650; line-height: 1.4; }
 .board-body { margin: 0; font-size: 14px; line-height: 1.7; color: var(--muted); overflow-wrap: anywhere; }
 
