@@ -14,7 +14,7 @@ window.BLOG = {
     decor: { meteors: true, seasons: true, progress: true, backToTop: true, calendar: true },
     features: { guestbook: true, inbox: true },
     inboxPin: "052626",
-    supabase: { url: "", key: "" },
+    supabase: { url: "https://fzbvrgcdnwaxyhlhfmhw.supabase.co", key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6YnZyZ2NkbndheHlobGhmbWh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0ODMwNTQsImV4cCI6MjExMDA1OTA1NH0.jb16vBkyv32D13xKLccFpSfhAFZb8xjfGuUhmKo_2ms" },
   },
   posts: [
     {
