@@ -207,6 +207,24 @@
       '&body=' + encodeURIComponent(content || '');
   }
 
+  function postMessage(name, text, isPrivate) {
+    return sbRequest('/rpc/post_message', {
+      method: 'POST',
+      body: { p_name: name, p_body: text, p_private: isPrivate },
+    }).then(function (ok) {
+      if (ok === true) return true;
+      throw new Error('留言被拒绝：可能发得太频繁，或内容不合规');
+    }).catch(function (error) {
+      var message = String((error && error.message) || '');
+      // 函数还没建时回退到直接插入（审核依旧默认 false）
+      if (message.indexOf('404') >= 0 || message.indexOf('PGRST202') >= 0) {
+        return sbRequest('/messages', { method: 'POST', body: { name: name, body: text, private: isPrivate } })
+          .then(function () { return true; });
+      }
+      throw error;
+    });
+  }
+
   function renderGuestbook() {
     if (!featureOn('guestbook')) return '<p class="empty">留言板未开启。</p>';
     return '<article class="article board">' +
@@ -219,6 +237,7 @@
         '<input id="board-name" class="board-input" maxlength="20" placeholder="昵称（可留空）">' +
         '<textarea id="board-text" class="board-input" rows="3" maxlength="500" placeholder="想说的话…"></textarea>' +
         '<label class="board-check"><input type="checkbox" id="board-private"> 仅站长可见（不公开）</label>' +
+        '<input type="text" id="board-trap" class="board-trap" tabindex="-1" autocomplete="off" aria-hidden="true">' +
         '<div class="board-form-actions">' +
           '<button type="submit" class="board-btn board-btn-primary">发表留言</button>' +
           '<a class="board-btn" id="board-mail" href="#" target="_blank" rel="noreferrer">邮件发给站长</a>' +
@@ -301,10 +320,16 @@
             return;
           }
           if (SUPABASE_ON) {
+            var trap = document.getElementById('board-trap');
+            if (trap && trap.value) {
+              if (status) status.textContent = '已提交，等站长审核后显示';
+              document.getElementById('board-text').value = '';
+              return;
+            }
             if (status) status.textContent = '发送中…';
             var privateBox = document.getElementById('board-private');
             var isPrivate = !!(privateBox && privateBox.checked);
-            sbRequest('/messages', { method: 'POST', body: { name: name || '匿名', body: text, private: isPrivate } })
+            postMessage(name || '匿名', text, isPrivate)
               .then(function () {
                 document.getElementById('board-text').value = '';
                 if (privateBox) privateBox.checked = false;
