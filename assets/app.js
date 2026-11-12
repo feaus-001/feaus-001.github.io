@@ -409,6 +409,7 @@
     }
 
     playBtn.addEventListener('click', function () {
+      root.removeAttribute('data-blocked');
       if (!audio.src) {
         load(index, true);
         return;
@@ -438,11 +439,14 @@
       }).catch(function () {
         // 浏览器禁止自动播放：提示一下，并等用户第一次点击/按键时开始
         root.setAttribute('data-blocked', 'true');
-        function resume() {
+        function resume(event) {
           document.removeEventListener('pointerdown', resume);
           document.removeEventListener('keydown', resume);
-          audio.play().catch(function () { /* ignore */ });
-          root.removeAttribute('data-blocked');
+          var target = event && event.target;
+          if (target && target.closest && target.closest('.music-player')) return;
+          audio.play().then(function () {
+            root.removeAttribute('data-blocked');
+          }).catch(function () { /* ignore */ });
         }
         document.addEventListener('pointerdown', resume);
         document.addEventListener('keydown', resume);
