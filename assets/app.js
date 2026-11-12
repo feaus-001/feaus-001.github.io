@@ -196,6 +196,7 @@
       '<form class="board-form" id="board-form">' +
         '<input id="board-name" class="board-input" maxlength="20" placeholder="昵称（可留空）">' +
         '<textarea id="board-text" class="board-input" rows="3" maxlength="500" placeholder="想说的话…"></textarea>' +
+        '<label class="board-check"><input type="checkbox" id="board-private"> 仅站长可见（不公开）</label>' +
         '<div class="board-form-actions">' +
           '<button type="submit" class="board-btn board-btn-primary">发表留言</button>' +
           '<a class="board-btn" id="board-mail" href="#" target="_blank" rel="noreferrer">邮件发给站长</a>' +
@@ -262,11 +263,14 @@
           }
           if (SUPABASE_ON) {
             if (status) status.textContent = '发送中…';
-            sbRequest('/messages', { method: 'POST', body: { name: name || '匿名', body: text, private: false } })
+            var privateBox = document.getElementById('board-private');
+            var isPrivate = !!(privateBox && privateBox.checked);
+            sbRequest('/messages', { method: 'POST', body: { name: name || '匿名', body: text, private: isPrivate } })
               .then(function () {
                 document.getElementById('board-text').value = '';
+                if (privateBox) privateBox.checked = false;
                 syncMail();
-                if (status) status.textContent = '已发布，所有人可见';
+                if (status) status.textContent = isPrivate ? '已发送，只有站长能看到' : '已发布，所有人可见';
                 refreshBoard('guestbook');
               })
               .catch(function (error) {
