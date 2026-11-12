@@ -172,6 +172,8 @@
       ', calendar: ' + (decor.calendar !== false) + ' },');
     out.push('    features: { guestbook: ' + (features.guestbook !== false) + ', inbox: ' + (features.inbox !== false) + ' },');
     out.push('    inboxPin: ' + json(site.inboxPin || '052626') + ',');
+    out.push('    supabase: { url: ' + json((site.supabase && site.supabase.url) || '') +
+      ', key: ' + json((site.supabase && site.supabase.key) || '') + ' },');
     out.push('  },');
     out.push('  posts: [');
     posts.forEach(function (post) {

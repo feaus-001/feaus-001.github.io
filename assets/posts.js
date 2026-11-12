@@ -14,6 +14,7 @@ window.BLOG = {
     decor: { meteors: true, seasons: true, progress: true, backToTop: true, calendar: true },
     features: { guestbook: true, inbox: true },
     inboxPin: "052626",
+    supabase: { url: "", key: "" },
   },
   posts: [
     {

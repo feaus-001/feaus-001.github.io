@@ -93,8 +93,44 @@
   }
 
   var GUEST_KEY = 'blog-guestbook';
+  var SB = site.supabase || {};
+  var SUPABASE_ON = !!(SB.url && SB.key);
 
-  function readGuest() {
+  function sbRequest(path, options) {
+    var opts = options || {};
+    var headers = {
+      apikey: SB.key,
+      authorization: 'Bearer ' + SB.key,
+      accept: 'application/json',
+      'content-type': 'application/json',
+    };
+    if (opts.method === 'POST') headers.prefer = 'return=representation';
+    return fetch(String(SB.url).replace(/\/+$/, '') + '/rest/v1' + path, {
+      method: opts.method || 'GET',
+      headers: headers,
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+    }).then(function (response) {
+      if (!response.ok) {
+        return response.text().then(function (text) {
+          throw new Error('HTTP ' + response.status + ' ' + text.slice(0, 120));
+        });
+      }
+      return response.json();
+    });
+  }
+
+  function normalizeRows(rows) {
+    return (rows || []).map(function (row) {
+      return {
+        name: row.name || '匿名',
+        body: row.body != null ? row.body : (row.text || ''),
+        at: row.created_at ? new Date(row.created_at).getTime() : (Number(row.at) || Date.now()),
+        private: !!row.private,
+      };
+    });
+  }
+
+  function localGuest() {
     try {
       var list = JSON.parse(localStorage.getItem(GUEST_KEY) || '[]');
       return Array.isArray(list) ? list : [];
@@ -103,30 +139,43 @@
     }
   }
 
-  function writeGuest(list) {
+  function saveLocalGuest(list) {
     try { localStorage.setItem(GUEST_KEY, JSON.stringify(list)); } catch (error) { /* ignore */ }
   }
 
-  function guestListHtml(mode) {
-    var list = readGuest();
-    if (!list.length) return '<p class="empty">还没有留言，来写第一条吧。</p>';
+  function rowsHtml(rows, mode) {
+    if (!rows.length) return '<p class="empty">还没有留言，来写第一条吧。</p>';
     var seen = 0;
     try { seen = Number(localStorage.getItem('blog-inbox-seen') || 0); } catch (error) { /* ignore */ }
-    return list.slice().reverse().map(function (item) {
-      var unread = mode === 'inbox' && Number(item.at) > seen;
+    return rows.slice().sort(function (a, b) { return b.at - a.at; }).map(function (row) {
+      var unread = mode === 'inbox' && row.at > seen;
       return '<article class="board-item' + (unread ? ' is-unread' : '') + '">' +
-        '<header><span class="board-author">' + escapeHtml(item.name || '匿名') + '</span>' +
-        '<span class="board-time">' + escapeHtml(formatIssueDate(new Date(item.at))) + '</span>' +
+        '<header><span class="board-author">' + escapeHtml(row.name) + '</span>' +
+        (row.private ? '<span class="board-tag">私密</span>' : '') +
+        '<span class="board-time">' + escapeHtml(formatIssueDate(new Date(row.at))) + '</span>' +
         (unread ? '<span class="board-dot"></span>' : '') +
         '</header>' +
-        '<p class="board-body">' + escapeHtml(item.text || '').replace(/\n/g, '<br>') + '</p>' +
+        '<p class="board-body">' + escapeHtml(String(row.body)).replace(/\n/g, '<br>') + '</p>' +
         '</article>';
     }).join('');
   }
 
-  function refreshGuestList(mode) {
+  function refreshBoard(mode) {
     var list = document.getElementById('board-list');
-    if (list) list.innerHTML = guestListHtml(mode);
+    if (!list) return;
+    if (!SUPABASE_ON) {
+      list.innerHTML = rowsHtml(normalizeRows(localGuest()), mode);
+      return;
+    }
+    list.innerHTML = '<p class="empty">正在读取…</p>';
+    var request = mode === 'inbox'
+      ? sbRequest('/rpc/read_inbox', { method: 'POST', body: { pass: sessionStorage.getItem('blog-inbox-pin') || '' } })
+      : sbRequest('/messages?select=name,body,private,created_at&private=eq.false&order=created_at.desc&limit=60');
+    request.then(function (rows) {
+      list.innerHTML = rowsHtml(normalizeRows(rows), mode);
+    }).catch(function (error) {
+      list.innerHTML = '<p class="empty">读取失败：' + escapeHtml(error.message || '网络错误') + '</p>';
+    });
   }
 
   function gmailUrl(content) {
@@ -141,7 +190,9 @@
     return '<article class="article board">' +
       '<a class="back-link" href="#/">← 返回文章列表</a>' +
       '<h1 class="article-title">心尘山留言板</h1>' +
-      '<p class="board-hint">随手留一句吧。当前是纯静态站点，留言先保存在你自己的浏览器里；点「邮件发给站长」可以把内容直接发到站长的 Gmail。</p>' +
+      '<p class="board-hint">' + (SUPABASE_ON
+        ? '留言所有人可见。写点什么吧，站长会看到。'
+        : '还没接后端：留言暂时只存在你自己的浏览器里。接上 Supabase 后，所有人写、所有人看。') + '</p>' +
       '<form class="board-form" id="board-form">' +
         '<input id="board-name" class="board-input" maxlength="20" placeholder="昵称（可留空）">' +
         '<textarea id="board-text" class="board-input" rows="3" maxlength="500" placeholder="想说的话…"></textarea>' +
@@ -178,10 +229,12 @@
     return '<article class="article board">' +
       '<a class="back-link" href="#/">← 返回文章列表</a>' +
       '<h1 class="article-title">收信箱</h1>' +
-      '<p class="board-hint">这里汇总你在这台浏览器里留下的留言，新消息会带蓝点。想让站长真正收到，点「邮件发给站长」。</p>' +
+      '<p class="board-hint">' + (SUPABASE_ON
+        ? '这里能看到所有留言，包括标记为私密的。'
+        : '这里汇总这台浏览器里的留言；接上 Supabase 后可显示全部来信。') + '</p>' +
       '<div class="board-actions">' +
         '<button type="button" class="board-btn" id="inbox-read">全部标为已读</button>' +
-        '<button type="button" class="board-btn" id="inbox-clear">清空本机留言</button>' +
+        (SUPABASE_ON ? '' : '<button type="button" class="board-btn" id="inbox-clear">清空本机留言</button>') +
         '<a class="board-btn" href="' + gmailUrl('') + '" target="_blank" rel="noreferrer">打开 Gmail 收件箱</a>' +
       '</div>' +
       '<div class="board-list" id="board-list"></div>' +
@@ -207,13 +260,27 @@
             if (status) status.textContent = '先写点什么吧';
             return;
           }
-          var list = readGuest();
+          if (SUPABASE_ON) {
+            if (status) status.textContent = '发送中…';
+            sbRequest('/messages', { method: 'POST', body: { name: name || '匿名', body: text, private: false } })
+              .then(function () {
+                document.getElementById('board-text').value = '';
+                syncMail();
+                if (status) status.textContent = '已发布，所有人可见';
+                refreshBoard('guestbook');
+              })
+              .catch(function (error) {
+                if (status) status.textContent = '发布失败：' + (error.message || '网络错误');
+              });
+            return;
+          }
+          var list = localGuest();
           list.push({ name: name, text: text, at: Date.now() });
-          writeGuest(list);
+          saveLocalGuest(list);
           document.getElementById('board-text').value = '';
-          refreshGuestList('guestbook');
           syncMail();
           if (status) status.textContent = '已发布（保存在本机浏览器）';
+          refreshBoard('guestbook');
         });
       }
       ['board-name', 'board-text'].forEach(function (id) {
@@ -221,23 +288,40 @@
         if (input) input.addEventListener('input', syncMail);
       });
       syncMail();
-      refreshGuestList('guestbook');
+      refreshBoard('guestbook');
       return;
     }
 
-    refreshGuestList(mode);
+    refreshBoard(mode);
     var gate = document.getElementById('inbox-gate');
     if (gate) {
       gate.addEventListener('submit', function (event) {
         event.preventDefault();
         var pin = document.getElementById('inbox-pin').value;
+        var status = document.getElementById('inbox-status');
+        if (SUPABASE_ON) {
+          if (status) status.textContent = '验证中…';
+          sbRequest('/rpc/inbox_ok', { method: 'POST', body: { pass: pin } }).then(function (result) {
+            if (result === true) {
+              try {
+                sessionStorage.setItem('blog-inbox-unlocked', '1');
+                sessionStorage.setItem('blog-inbox-pin', pin);
+              } catch (error) { /* ignore */ }
+              render();
+            } else if (status) {
+              status.textContent = '口令不对';
+            }
+          }).catch(function (error) {
+            if (status) status.textContent = '验证失败：' + (error.message || '网络错误');
+          });
+          return;
+        }
         var expected = (site && site.inboxPin) || '052626';
         if (pin === expected) {
           try { sessionStorage.setItem('blog-inbox-unlocked', '1'); } catch (error) { /* ignore */ }
           render();
-        } else {
-          var status = document.getElementById('inbox-status');
-          if (status) status.textContent = '口令不对';
+        } else if (status) {
+          status.textContent = '口令不对';
         }
       });
       return;
@@ -246,305 +330,17 @@
     if (read) {
       read.addEventListener('click', function () {
         try { localStorage.setItem('blog-inbox-seen', String(Date.now())); } catch (error) { /* ignore */ }
-        refreshGuestList(mode);
+        refreshBoard(mode);
       });
     }
     var clear = document.getElementById('inbox-clear');
     if (clear) {
       clear.addEventListener('click', function () {
         if (!window.confirm('清空本机保存的留言？')) return;
-        writeGuest([]);
-        refreshGuestList(mode);
+        saveLocalGuest([]);
+        refreshBoard(mode);
       });
     }
-  }
-
-
-  function hexToRgb(hex) {
-    var match = /^#?([a-f\d]{3}|[a-f\d]{6})$/i.exec(String(hex || '').trim());
-    if (!match) return null;
-    var value = match[1];
-    if (value.length === 3) value = value[0] + value[0] + value[1] + value[1] + value[2] + value[2];
-    return {
-      r: parseInt(value.slice(0, 2), 16),
-      g: parseInt(value.slice(2, 4), 16),
-      b: parseInt(value.slice(4, 6), 16),
-    };
-  }
-
-  function mixHex(accent, base, ratio) {
-    var a = hexToRgb(accent);
-    var b = hexToRgb(base);
-    if (!a || !b) return accent;
-    var channels = ['r', 'g', 'b'].map(function (key) {
-      return Math.round(a[key] * (1 - ratio) + b[key] * ratio).toString(16).padStart(2, '0');
-    });
-    return '#' + channels.join('');
-  }
-
-  function number(value, fallback) {
-    var parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : fallback;
-  }
-
-  function applyAccent() {
-    var theme = site.theme || {};
-    var root = document.documentElement;
-    var dark = root.getAttribute('data-theme') === 'dark';
-    var accent = dark ? (theme.accentDark || theme.accent) : (theme.accent || theme.accentDark);
-    if (accent) {
-      root.style.setProperty('--accent', accent);
-      root.style.setProperty('--accent-soft', mixHex(accent, dark ? '#0e1117' : '#ffffff', 0.85));
-    }
-    var background = dark ? (theme.bgDark || theme.bgLight) : (theme.bgLight || theme.bgDark);
-    if (background) root.style.setProperty('--bg', background);
-    var textColor = dark ? (theme.textDark || theme.textLight) : (theme.textLight || theme.textDark);
-    if (textColor) root.style.setProperty('--fg', textColor);
-    var mutedColor = dark ? (theme.mutedDark || theme.mutedLight) : (theme.mutedLight || theme.mutedDark);
-    if (mutedColor) root.style.setProperty('--muted', mutedColor);
-    var rgb = hexToRgb(background || (dark ? '#0e1117' : '#ffffff')) || { r: 255, g: 255, b: 255 };
-    var cardAlpha = number(theme.cardAlpha, 72) / 100;
-    var dimAlpha = number(theme.bgDim, 0) / 100;
-    root.style.setProperty('--card-bg', 'rgba(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ', ' + cardAlpha + ')');
-    root.style.setProperty('--card-blur', number(theme.cardBlur, 12) + 'px');
-    root.style.setProperty('--card-radius', number(theme.cardRadius, 18) + 'px');
-    root.style.setProperty('--layout-width', number(theme.layoutWidth, 860) + 'px');
-    root.style.setProperty('--bg-blur', number(theme.bgBlur, 0) + 'px');
-    root.style.setProperty('--dim-bg', 'rgba(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ', ' + dimAlpha + ')');
-    root.style.setProperty('--rb-width', number(theme.rainbowWidth, 2) + 'px');
-    root.style.setProperty('--rb-speed', number(theme.rainbowSpeed, 9) + 's');
-    root.style.setProperty('--rb-alpha', String(number(theme.rainbowAlpha, 85) / 100));
-    root.classList.toggle('has-card-shadow', theme.cardShadow !== false);
-    if (theme.bgImage) {
-      var imageUrl = String(theme.bgImage);
-      try { imageUrl = new URL(imageUrl, location.href).href; } catch (error) { /* 保留原值 */ }
-      var dim = number(theme.bgDim, 0) / 100;
-      var overlay = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + dim + ')';
-      root.style.setProperty(
-        '--bg-image',
-        'linear-gradient(' + overlay + ',' + overlay + '),url("' + imageUrl.replace(/"/g, '%22') + '")',
-      );
-      root.classList.add('has-bg-image');
-      if (!document.querySelector('.bg-scrim')) {
-        var scrim = document.createElement('div');
-        scrim.className = 'bg-scrim';
-        document.body.insertBefore(scrim, document.body.firstChild);
-      }
-    } else {
-      root.classList.remove('has-bg-image');
-      var existing = document.querySelector('.bg-scrim');
-      if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
-    }
-    root.classList.toggle('rainbow-frame', theme.rainbow !== false);
-  }
-
-  function applySiteChrome() {
-    var brand = document.querySelector('.brand');
-    if (brand && site.name) brand.textContent = site.name;
-    var navLinks = document.querySelectorAll('.nav-link');
-    if (navLinks[0]) navLinks[0].textContent = sectionLabel('posts', '文章');
-    if (navLinks[1]) navLinks[1].textContent = sectionLabel('about', '关于');
-    var footer = document.querySelector('.site-footer');
-    if (footer && site.footer && footer.firstElementChild) footer.firstElementChild.textContent = site.footer;
-    var buildMeta = document.querySelector('meta[name="site-build"]');
-    if (footer && buildMeta && footer.lastElementChild) {
-      footer.lastElementChild.textContent = '静态博客 · v' + String(buildMeta.getAttribute('content') || '').slice(0, 6);
-    }
-  }
-
-  function escapeHtml(value) {
-    return String(value).replace(/[&<>"']/g, function (char) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char];
-    });
-  }
-
-  function inline(text) {
-    var codes = [];
-    var out = text.replace(/`([^`]+)`/g, function (_, code) {
-      codes.push(code);
-      return '\u0000' + (codes.length - 1) + '\u0000';
-    });
-    out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-    out = out.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, function (_, label, href) {
-      return '<a href="' + href + '">' + label + '</a>';
-    });
-    out = out.replace(/\u0000(\d+)\u0000/g, function (_, index) {
-      return '<code>' + codes[Number(index)] + '</code>';
-    });
-    return out;
-  }
-
-  function renderMarkdown(source) {
-    var lines = String(source).split(/\r?\n/);
-    var html = '';
-    var paragraph = [];
-    var listOpen = false;
-    var inCode = false;
-    var codeLines = [];
-
-    function flushParagraph() {
-      if (paragraph.length) {
-        html += '<p>' + inline(paragraph.join(' ')) + '</p>';
-        paragraph = [];
-      }
-    }
-    function closeList() {
-      if (listOpen) {
-        html += '</ul>';
-        listOpen = false;
-      }
-    }
-    function flushCode() {
-      html += '<pre><code>' + escapeHtml(codeLines.join('\n')) + '</code></pre>';
-      codeLines = [];
-      inCode = false;
-    }
-
-    for (var i = 0; i < lines.length; i++) {
-      var raw = lines[i];
-      var line = raw.replace(/\s+$/, '');
-
-      if (line.trim().indexOf('```') === 0) {
-        if (inCode) flushCode();
-        else {
-          flushParagraph();
-          closeList();
-          inCode = true;
-        }
-        continue;
-      }
-      if (inCode) {
-        codeLines.push(raw);
-        continue;
-      }
-      if (!line.trim()) {
-        flushParagraph();
-        closeList();
-        continue;
-      }
-      var heading = /^(#{1,3})\s+(.*)$/.exec(line);
-      if (heading) {
-        flushParagraph();
-        closeList();
-        var level = heading[1].length;
-        html += '<h' + level + '>' + inline(escapeHtml(heading[2])) + '</h' + level + '>';
-        continue;
-      }
-      if (/^\s*[-*]\s+/.test(line)) {
-        flushParagraph();
-        if (!listOpen) {
-          html += '<ul>';
-          listOpen = true;
-        }
-        html += '<li>' + inline(escapeHtml(line.replace(/^\s*[-*]\s+/, ''))) + '</li>';
-        continue;
-      }
-      if (/^\s*>\s?/.test(line)) {
-        flushParagraph();
-        closeList();
-        html += '<blockquote>' + inline(escapeHtml(line.replace(/^\s*>\s?/, ''))) + '</blockquote>';
-        continue;
-      }
-      if (/^\s*---+\s*$/.test(line)) {
-        flushParagraph();
-        closeList();
-        html += '<hr>';
-        continue;
-      }
-      closeList();
-      paragraph.push(escapeHtml(line));
-    }
-
-    flushParagraph();
-    closeList();
-    if (inCode) flushCode();
-    return html;
-  }
-
-  function formatDate(value) {
-    var parts = String(value).split('-');
-    if (parts.length !== 3) return value;
-    return parts[0] + ' 年 ' + Number(parts[1]) + ' 月 ' + Number(parts[2]) + ' 日';
-  }
-
-  function tagList(tags) {
-    return (tags || []).map(function (tag) {
-      return '<span class="tag">' + escapeHtml(tag) + '</span>';
-    }).join(' ');
-  }
-
-  function renderHero() {
-    return (
-      '<section class="hero">' +
-        (site.avatar ? '<img class="hero-avatar" src="' + escapeHtml(site.avatar) + '" alt="' + escapeHtml(site.name) + ' 的头像">' : '') +
-        '<h1 class="hero-title">' + escapeHtml(site.name) + '</h1>' +
-        '<p class="hero-tagline">' + escapeHtml(site.tagline) + '</p>' +
-        '<p class="hero-bio">' + escapeHtml(site.bio) + '</p>' +
-        '<div class="hero-links">' + links() + '</div>' +
-        (featureOn('guestbook') ? '<div class="hero-links"><a class="chip" href="#/guestbook">留言板</a></div>' : '') +
-      '</section>'
-    );
-  }
-
-  function links() {
-    return (site.links || []).map(function (link) {
-      return '<a class="chip" href="' + escapeHtml(link.href) + '" target="_blank" rel="noreferrer">' + escapeHtml(link.label) + '</a>';
-    }).join('');
-  }
-
-  function renderList() {
-    var cards = posts.map(function (post) {
-      return (
-        '<a class="post-card" href="#/post/' + encodeURIComponent(post.slug) + '">' +
-          '<div class="post-meta"><time datetime="' + escapeHtml(post.date) + '">' + escapeHtml(formatDate(post.date)) + '</time>' +
-            (post.tags && post.tags.length ? '<span>·</span>' + tagList(post.tags) : '') +
-          '</div>' +
-          '<h2 class="post-card-title">' + escapeHtml(post.title) + '</h2>' +
-          '<p class="post-card-summary">' + escapeHtml(post.summary || '') + '</p>' +
-        '</a>'
-      );
-    }).join('');
-
-    return (
-      renderHero() +
-      '<h2 class="section-title">' + escapeHtml(sectionLabel('posts', '文章')) + '</h2>' +
-      '<div class="post-list">' + (cards || '<p class="empty">还没有文章。</p>') + '</div>'
-    );
-  }
-
-  function renderPost(slug) {
-    var post = null;
-    for (var i = 0; i < posts.length; i++) {
-      if (posts[i].slug === slug) post = posts[i];
-    }
-    if (!post) {
-      return '<p class="empty">找不到这篇文章。<a href="#/">回到首页</a></p>';
-    }
-    return (
-      '<article class="article">' +
-        '<a class="back-link" href="#/">← 返回文章列表</a>' +
-        '<div class="post-meta"><time datetime="' + escapeHtml(post.date) + '">' + escapeHtml(formatDate(post.date)) + '</time>' +
-          (post.tags && post.tags.length ? '<span>·</span>' + tagList(post.tags) : '') +
-        '</div>' +
-        '<h1 class="article-title">' + escapeHtml(post.title) + '</h1>' +
-        '<div class="article-body">' + renderMarkdown(post.body || '') + '</div>' +
-      '</article>'
-    );
-  }
-
-  function renderAbout() {
-    var aboutText = site.about || site.bio;
-    return (
-      '<article class="article">' +
-        '<a class="back-link" href="#/">← 返回文章列表</a>' +
-        '<h1 class="article-title">' + escapeHtml(sectionLabel('about', '关于')) + '</h1>' +
-        '<div class="about-card">' +
-          (site.avatar ? '<img class="hero-avatar" src="' + escapeHtml(site.avatar) + '" alt="头像">' : '') +
-          '<p class="hero-bio" style="margin-top:16px">' + escapeHtml(aboutText) + '</p>' +
-          '<div class="hero-links">' + links() + '</div>' +
-        '</div>' +
-      '</article>'
-    );
   }
 
   function currentRoute() {
