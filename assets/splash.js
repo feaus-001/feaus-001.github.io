@@ -4,31 +4,6 @@
 
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // 1) 在 iframe 里（比如编辑器预览、右键“重新加载框架”）永远不播
-  try {
-    if (window.self !== window.top) {
-      document.documentElement.classList.add('intro-done');
-      return;
-    }
-  } catch (error) {
-    document.documentElement.classList.add('intro-done');
-    return;
-  }
-
-  // 2) 同一标签页只播一次；另加 6 秒冷却，吞掉“右键→立刻新标签打开”的重复播放
-  var SEEN_KEY = 'dsh-intro-shown';
-  var AT_KEY = 'dsh-intro-at';
-  var COOLDOWN = 6000;
-  try {
-    var lastAt = Number(window.localStorage.getItem(AT_KEY) || 0);
-    if (window.sessionStorage.getItem(SEEN_KEY) === '1' || (lastAt && Date.now() - lastAt < COOLDOWN)) {
-      document.documentElement.classList.add('intro-done');
-      return;
-    }
-    window.sessionStorage.setItem(SEEN_KEY, '1');
-    window.localStorage.setItem(AT_KEY, String(Date.now()));
-  } catch (error) { /* 隐私模式下不可用，就每次都播 */ }
-
   var overlay = document.createElement('div');
   overlay.className = 'intro';
   overlay.innerHTML =
