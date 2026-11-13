@@ -15,14 +15,6 @@
       '<div class="intro-quote">' +
         '<p class="q1">为人民服务</p>' +
         '<p class="q2">世上无难事，只要肯登攀</p>' +
-        '<svg class="intro-emblem" viewBox="0 0 64 64" role="img" aria-label="中国共产党党徽">' +
-          '<g fill="none" stroke="#ffcf40" stroke-linecap="round" stroke-linejoin="round">' +
-            '<path d="M11 47 A 20 20 0 0 1 43 11" stroke-width="5"/>' +
-            '<path d="M10 46 L15 53" stroke-width="6"/>' +
-            '<path d="M52 55 L24 25" stroke-width="4.6"/>' +
-            '<path d="M16 31 L34 12" stroke-width="8"/>' +
-          '</g>' +
-        '</svg>' +
       '</div>' +
     '</div>' +
     '<div class="intro-hint">点击任意处跳过</div>';
