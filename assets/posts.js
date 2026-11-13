@@ -19,6 +19,14 @@ window.BLOG = {
   },
   posts: [
     {
+      slug: "post-20261113-2250",
+      title: "暂时没有灵感的文章",
+      date: "2026-11-13",
+      tags: ["不明意义"],
+      summary: "emmm...",
+      body: `我也不知道写什么（`,
+    },
+    {
       slug: "post-20261113-1958",
       title: "关于肥鱼对长征机的看法",
       date: "2026-11-13",
