@@ -15,10 +15,10 @@
     return;
   }
 
-  // 2) 同一浏览器会话只播一次；再叠一层 30 分钟冷却，防止右键新标签重播
+  // 2) 同一标签页只播一次；另加 6 秒冷却，吞掉“右键→立刻新标签打开”的重复播放
   var SEEN_KEY = 'dsh-intro-shown';
   var AT_KEY = 'dsh-intro-at';
-  var COOLDOWN = 30 * 60 * 1000;
+  var COOLDOWN = 6000;
   try {
     var lastAt = Number(window.localStorage.getItem(AT_KEY) || 0);
     if (window.sessionStorage.getItem(SEEN_KEY) === '1' || (lastAt && Date.now() - lastAt < COOLDOWN)) {
