@@ -842,7 +842,8 @@
     if (!tracks.length) return;
 
     var audio = document.createElement('audio');
-    audio.preload = 'none';
+    audio.preload = 'metadata';
+    audio.setAttribute('playsinline', '');
     audio.style.display = 'none';
     document.body.appendChild(audio);
 
@@ -854,6 +855,8 @@
       '<span class="mp-info"><span class="mp-title"></span><span class="mp-time">0:00 / 0:00</span></span>' +
       '<input class="mp-progress" type="range" min="0" max="1000" value="0" aria-label="播放进度">' +
       '<input class="mp-volume" type="range" min="0" max="100" value="70" aria-label="音量">' +
+      '<button type="button" class="mp-btn mp-mute" aria-label="静音">🔊</button>' +
+      '<span class="mp-meter"><i></i></span>' +
       '<button type="button" class="mp-btn mp-next" aria-label="下一首">⏭</button>';
     document.body.appendChild(root);
 
@@ -862,21 +865,34 @@
     var playBtn = root.querySelector('.mp-play');
     var progress = root.querySelector('.mp-progress');
     var volume = root.querySelector('.mp-volume');
+    var muteBtn = root.querySelector('.mp-mute');
+    var meter = root.querySelector('.mp-meter > i');
     var index = 0;
     var dragging = false;
+
+    // iOS 上 audio.volume 是只读的（拖动无效果），改用静音键
+    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (isIOS) volume.hidden = true;
 
     var savedVolume = 70;
     try {
       var storedVolume = localStorage.getItem('blog-volume');
       if (storedVolume !== null) savedVolume = Math.max(0, Math.min(100, Number(storedVolume)));
     } catch (error) { /* ignore */ }
-    audio.volume = savedVolume / 100;
+    audio.volume = isIOS ? 1 : savedVolume / 100;
     volume.value = String(savedVolume);
     volume.addEventListener('input', function () {
       var next = Number(volume.value) / 100;
       audio.volume = next;
       audio.muted = next === 0;
       try { localStorage.setItem('blog-volume', volume.value); } catch (error) { /* ignore */ }
+    });
+
+    muteBtn.addEventListener('click', function () {
+      audio.muted = !audio.muted;
+      muteBtn.textContent = audio.muted ? '🔇' : '🔊';
+      muteBtn.setAttribute('aria-label', audio.muted ? '取消静音' : '静音');
     });
 
     function formatTime(seconds) {
@@ -907,6 +923,7 @@
       var current = audio.currentTime || 0;
       if (!dragging && duration > 0) progress.value = String(Math.round((current / duration) * 1000));
       timeEl.textContent = formatTime(current) + ' / ' + formatTime(duration);
+      if (meter) meter.style.width = duration > 0 ? Math.min(100, (current / duration) * 100) + '%' : '0%';
     }
 
     playBtn.addEventListener('click', function () {

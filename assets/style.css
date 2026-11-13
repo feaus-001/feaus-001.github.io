@@ -510,12 +510,44 @@ html.rainbow-frame body::after {
 .mp-time { font-size: 11px; line-height: 1.3; color: var(--muted); font-variant-numeric: tabular-nums; }
 .mp-progress { width: 84px; flex: none; accent-color: var(--accent); }
 .mp-volume { width: 64px; flex: none; accent-color: var(--accent); }
+.mp-mute { font-size: 14px; }
+
+.mp-meter {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 3px;
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  pointer-events: none;
+}
+.mp-meter i {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 2px;
+  background: var(--accent);
+  transition: width 0.2s linear;
+}
 
 @media (max-width: 720px) {
-  .music-player { right: 10px; bottom: 10px; padding: 6px 8px; gap: 6px; max-width: calc(100vw - 20px); }
+  .music-player {
+    left: 10px;
+    right: 10px;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    max-width: none;
+    padding: 8px 10px 11px;
+    gap: 6px;
+  }
   .mp-progress { display: none; }
-  .mp-volume { width: 52px; }
-  .mp-title { max-width: 120px; }
+  .mp-volume { display: none; }
+  .mp-btn { width: 38px; height: 38px; font-size: 14px; }
+  .mp-info { flex: 1; min-width: 0; }
+  .mp-title { max-width: none; font-size: 13px; }
+  .mp-time { font-size: 10.5px; }
+  body { padding-bottom: 86px; }
 }
 
 /* 装饰层：流星 / 季节粒子 / 进度 / 回顶 / 日历 / 节日横幅 */
@@ -828,6 +860,15 @@ html.intro-active body { overflow: hidden; }
   font-size: clamp(12px, 2.1vw, 21px);
   opacity: 0;
   animation: intro-quote-in 1.8s ease forwards 3.4s;
+}
+
+.intro-emblem {
+  width: clamp(46px, 6.4vw, 64px);
+  height: auto;
+  margin-top: 14px;
+  opacity: 0;
+  filter: drop-shadow(0 0 14px rgba(220, 30, 30, 0.55));
+  animation: intro-quote-in 2s ease forwards 4.8s;
 }
 @keyframes intro-quote-in {
   from { opacity: 0; filter: blur(6px); transform: translateY(6px); }
