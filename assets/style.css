@@ -802,7 +802,72 @@ html.intro-done .site-footer {
   .world-stats { grid-template-columns: repeat(2, 1fr); }
   .world-title { font-size: 19px; }
 }
-.world-foot { margin-top: 12px; font-size: 11px; color: var(--muted); opacity: .85; }.brand-mark {
+.world-foot { margin-top: 12px; font-size: 11px; color: var(--muted); opacity: .85; }
+
+/* 长征姬主题卡（TFR 子模组风格：暗红 + 金边 + 五角星） */
+.cj-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 14px 0 10px;
+  padding: 16px 18px;
+  border: 1px solid #b8862e;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #7a1616 0%, #4a0f12 55%, #2a0a0c 100%);
+  box-shadow: 0 10px 28px rgba(122, 22, 22, 0.28), inset 0 1px 0 rgba(255, 216, 128, .18);
+  color: #f8e7c8;
+  overflow: hidden;
+}
+.cj-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(45deg, rgba(255, 255, 255, .035) 0 2px, transparent 2px 6px);
+  pointer-events: none;
+}
+.cj-star {
+  flex: none;
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffd766, #b8862e 70%, #7a5a12);
+  color: #6d0f0f;
+  font-size: 28px;
+  box-shadow: 0 0 0 2px rgba(255, 216, 128, .35), 0 6px 18px rgba(0, 0, 0, .35);
+}
+.cj-body { min-width: 0; flex: 1; }
+.cj-kicker { font-size: 11px; letter-spacing: .16em; color: #e3b968; text-transform: uppercase; }
+.cj-title { font-size: 24px; font-weight: 700; letter-spacing: .06em; color: #fff4de; margin-top: 2px; }
+.cj-sub { font-size: 13px; color: #e8c99a; margin-top: 2px; }
+.cj-tags { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.cj-tags span {
+  font-size: 11px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 216, 128, .45);
+  color: #ffdf9e;
+  background: rgba(0, 0, 0, .18);
+}
+.cj-link {
+  flex: none;
+  align-self: flex-end;
+  font-size: 12px;
+  padding: 7px 12px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 216, 128, .55);
+  color: #ffe6b0;
+  text-decoration: none;
+  background: rgba(0, 0, 0, .2);
+}
+.cj-link:hover { background: rgba(255, 216, 128, .16); text-decoration: none; }
+@media (max-width: 420px) {
+  .cj-card { flex-wrap: wrap; padding: 14px; gap: 12px; }
+  .cj-title { font-size: 20px; }
+  .cj-link { width: 100%; text-align: center; }
+}.brand-mark {
   width: 26px;
   height: 26px;
   display: block;

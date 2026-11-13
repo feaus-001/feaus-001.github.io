@@ -14,6 +14,7 @@ window.BLOG = {
     decor: { meteors: true, seasons: true, progress: true, backToTop: true, calendar: true },
     features: { guestbook: true, inbox: true },
     mcWorld: { enabled: true, world: "心尘世界！", version: "1.19", leaderTitle: "心尘山领袖", leader: "心辰", days: "1", achievements: "520", players: "2", lastPlayed: "11-12", pack: "Forge 41 · OptiFine H8" },
+    cjCard: { enabled: true, kicker: "TFR · 烈焰升腾 子模组", title: "长征姬", subtitle: "招募征酱 · 换装决议", tags: "元帅,将领,换装", link: "https://3yc.top/pages/hoi/%E9%95%BF%E5%BE%81%E6%9C%BAmod%E5%90%88%E9%9B%86" },
     inboxPin: "xinchen-2026-secure",
     supabase: { url: "https://fzbvrgcdnwaxyhlhfmhw.supabase.co", key: "sb_publishable_cA0BnfnCO4MPZGbbSWCAjQ_pkOOVRT1" },
   },
