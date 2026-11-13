@@ -932,7 +932,7 @@
     if (!tracks.length) return;
 
     var audio = document.createElement('audio');
-    audio.preload = 'metadata';
+    audio.preload = 'none';
     audio.setAttribute('playsinline', '');
     audio.style.display = 'none';
     document.body.appendChild(audio);
@@ -1042,6 +1042,13 @@
     });
 
     function tryAutoplay() {
+      // 手机上先不自动拉歌：一首 2MB，慢网下会把首页拖慢好几秒
+      var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection || {};
+      var tiny = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+      if (tiny || conn.saveData || /(^|-)2g$|slow-2g/.test(conn.effectiveType || '')) {
+        root.setAttribute('data-blocked', 'true');
+        return;
+      }
       audio.play().then(function () {
         root.removeAttribute('data-blocked');
       }).catch(function () {
@@ -1066,6 +1073,8 @@
     // 开场动画结束时（点击跳过/自动结束）都算一次用户手势，顺手把音乐放起来
     window.__DSH_PLAY__ = function () {
       if (!audio.paused) return;
+      // 手机上不主动拉歌（2MB 起步），等用户点播放
+      if (/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)) return;
       audio.play().then(function () {
         root.removeAttribute('data-blocked');
       }).catch(function () { /* 仍然被拦就算了，保留脉冲提示 */ });
