@@ -669,8 +669,96 @@
     }).join('');
   }
 
-  function renderWorldCard() {
-    var mc = site.mcWorld;
+  // ── 元旦 / 除夕 倒计时 ─────────────────────────────────────────
+  var CNY_DAYS = {
+    2026: '2026-02-17', 2027: '2027-02-06', 2028: '2028-01-26', 2029: '2029-02-13',
+    2030: '2030-02-03', 2031: '2031-01-23', 2032: '2032-02-11', 2033: '2033-01-31',
+    2034: '2034-02-19', 2035: '2035-02-08'
+  };
+
+  function countdownTargets(now) {
+    var y = now.getFullYear();
+    var newYear = new Date(y + 1, 0, 1, 0, 0, 0);
+    var eve = null;
+    Object.keys(CNY_DAYS).map(Number).sort(function (a, b) { return a - b; }).forEach(function (year) {
+      if (eve) return;
+      var parts = CNY_DAYS[year].split('-');
+      var cny = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]), 0, 0, 0);
+      var e = new Date(cny.getTime() - 86400000);
+      if (e.getTime() > now.getTime() - 86400000) eve = { date: e, year: year };
+    });
+    return { newYear: newYear, eve: eve };
+  }
+
+  function splitTime(ms) {
+    var total = Math.floor(ms / 1000);
+    return {
+      d: Math.floor(total / 86400),
+      h: Math.floor((total % 86400) / 3600),
+      m: Math.floor((total % 3600) / 60),
+      s: total % 60
+    };
+  }
+
+  function pad(n) { return n < 10 ? '0' + n : String(n); }
+
+  function renderCountdown() {
+    if (site.countdown && site.countdown.enabled === false) return '';
+    var now = new Date();
+    var t = countdownTargets(now);
+    return '<div class="countdown" id="countdown">' +
+      '<div class="cd-row" data-cd="newyear">' +
+        '<span class="cd-label">距 <b>' + (now.getFullYear() + 1) + ' 元旦</b></span>' +
+        '<span class="cd-nums"><b data-k="d">--</b><i>天</i><b data-k="h">--</b><i>时</i><b data-k="m">--</b><i>分</i><b data-k="s">--</b><i>秒</i></span>' +
+      '</div>' +
+      (t.eve ? '<div class="cd-row" data-cd="eve">' +
+        '<span class="cd-label">距 <b>除夕</b>（腊月三十）</span>' +
+        '<span class="cd-nums"><b data-k="d">--</b><i>天</i><b data-k="h">--</b><i>时</i><b data-k="m">--</b><i>分</i><b data-k="s">--</b><i>秒</i></span>' +
+      '</div>' : '') +
+      '</div>';
+  }
+
+  var countdownTimer = null;
+  function startCountdown() {
+    if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
+    var root = document.getElementById('countdown');
+    if (!root) return;
+
+    function paint() {
+      var now = new Date();
+      var t = countdownTargets(now);
+      var rows = [
+        ['newyear', t.newYear],
+        ['eve', t.eve ? t.eve.date : null]
+      ];
+      rows.forEach(function (pair) {
+        var el = root.querySelector('[data-cd="' + pair[0] + '"]');
+        if (!el || !pair[1]) return;
+        var diff = pair[1].getTime() - now.getTime();
+        var nums = el.querySelectorAll('[data-k]');
+        if (diff <= 0) {
+          if (el.dataset.done !== '1') {
+            el.dataset.done = '1';
+            el.querySelector('.cd-label').innerHTML = '<b>就是今天</b>';
+            el.classList.add('is-today');
+          }
+          nums.forEach(function (n) { n.textContent = '0'; });
+          return;
+        }
+        var s = splitTime(diff);
+        var map = { d: s.d, h: s.h, m: s.m, s: s.s };
+        nums.forEach(function (n) {
+          var key = n.getAttribute('data-k');
+          n.textContent = key === 'd' ? String(map[key]) : pad(map[key]);
+        });
+      });
+    }
+
+    paint();
+    countdownTimer = setInterval(paint, 1000);
+  }
+
+  function renderWorldCard() {    var mc = site.mcWorld;
     if (!mc || mc.enabled === false) return '';
     return '<div class="world-card">' +
       '<div class="world-head"><span class="server-dot live"></span><b>我的世界</b><span class="world-tag">Java ' + escapeHtml(mc.version || '') + '</span></div>' +
@@ -701,6 +789,7 @@
 
     return (
       renderHero() +
+      renderCountdown() +
       '<div class="server-card" id="server-card" hidden></div>' +
       renderWorldCard() +
       '<h2 class="section-title">' + escapeHtml(sectionLabel('posts', '文章')) + '</h2>' +
@@ -797,6 +886,7 @@
       app.innerHTML = renderList();
       document.title = site.name + ' · ' + site.tagline;
       mountServerCard();
+      startCountdown();
     }
 
     var navLinks = document.querySelectorAll('.nav-link');

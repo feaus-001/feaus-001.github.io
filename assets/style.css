@@ -1137,3 +1137,51 @@ html.intro-done .site-footer {
   .hero::before, .hero::after { width: 12px; height: 12px; }
   .post-card { padding-left: 18px; }
 }
+
+/* 元旦 / 除夕 倒计时 */
+.countdown {
+  margin: 18px 0 4px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  overflow: hidden;
+}
+.cd-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+}
+.cd-row + .cd-row { border-top: 1px solid var(--border); }
+.cd-label { font-size: 13px; color: var(--muted); letter-spacing: .02em; }
+.cd-label b { color: var(--fg); font-weight: 600; }
+.cd-nums {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+.cd-nums b {
+  font-size: 20px;
+  line-height: 1;
+  color: var(--accent);
+  min-width: 1.6ch;
+  text-align: right;
+  font-weight: 700;
+}
+.cd-nums i {
+  font-style: normal;
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0 4px 0 1px;
+}
+.cd-row.is-today .cd-nums b { color: #ff7bb0; }
+.cd-row[data-cd="eve"] .cd-nums b { color: #ff5233; }
+.cd-row[data-cd="eve"] .cd-label b { color: #ff5233; }
+
+@media (max-width: 420px) {
+  .cd-row { flex-direction: column; align-items: flex-start; gap: 6px; padding: 10px 14px; }
+  .cd-nums b { font-size: 18px; }
+}
