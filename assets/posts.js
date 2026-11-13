@@ -4,7 +4,7 @@ window.BLOG = {
     name: "心尘山总站",
     tagline: "为人民服务⭐",
     bio: "“我们从来没靠过别人，我们只是靠自己这双手” —心辰Stellan",
-    avatar: "assets/fish.png",
+    avatar: "assets/avatar.jpg",
     about: "如果世界危机来临，我唯一能做的便是在此留下世人存在的足迹。",
     footer: "© 2026 by.XinChen",
     sections: { posts: "文章", about: "刻言录" },
