@@ -683,9 +683,30 @@
 
     return (
       renderHero() +
+      '<div class="server-card" id="server-card" hidden></div>' +
       '<h2 class="section-title">' + escapeHtml(sectionLabel('posts', '文章')) + '</h2>' +
       '<div class="post-list">' + (cards || '<p class="empty">还没有文章。</p>') + '</div>'
     );
+  }
+
+  function mountServerCard() {
+    var card = document.getElementById('server-card');
+    if (!card || !SUPABASE_ON || !featureOn('mcStatus')) return;
+    sbRequest('/mc_status?select=*&id=eq.1').then(function (rows) {
+      if (!rows || !rows.length) return;
+      var status = rows[0];
+      var updated = new Date(status.updated_at);
+      var fresh = Date.now() - updated.getTime() < 180000;
+      var minutes = Math.max(0, Math.round((Date.now() - updated.getTime()) / 60000));
+      card.hidden = false;
+      card.innerHTML =
+        '<span class="server-dot' + (fresh ? ' live' : '') + '"></span>' +
+        '<span class="server-label">服务器</span>' +
+        '<span class="server-count">' + (status.online || 0) + ' / ' + (status.max || 0) + ' 人在线</span>' +
+        '<span class="server-meta">' + escapeHtml(status.version || '') + '</span>' +
+        (status.latency ? '<span class="server-meta">' + status.latency + ' ms</span>' : '') +
+        '<span class="server-time">' + (minutes < 1 ? '刚刚更新' : minutes + ' 分钟前') + '</span>';
+    }).catch(function () { /* 没配置或没数据就保持隐藏 */ });
   }
 
   function renderPost(slug) {
@@ -756,6 +777,7 @@
     } else {
       app.innerHTML = renderList();
       document.title = site.name + ' · ' + site.tagline;
+      mountServerCard();
     }
 
     var navLinks = document.querySelectorAll('.nav-link');
