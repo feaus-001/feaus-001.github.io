@@ -13,9 +13,7 @@
     --fg: #e8eefc;
     --muted: #8b9ab8;
     --gold: #ffd166;
-    --accent: #6ea8ff;
     --green: #4ade80;
-    --pink: #ff7bb0;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; min-height: 100%; }
@@ -27,33 +25,29 @@
     max-width: 560px;
     margin: 0 auto;
   }
-  header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+  header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
   h1 { font-size: 21px; margin: 0; letter-spacing: .5px; }
   .ver { font-size: 11px; color: var(--muted); }
+  .head-actions { margin-left: auto; display: flex; gap: 6px; }
+  .mini {
+    font: inherit; font-size: 12px; padding: 6px 10px;
+    border-radius: 9px; border: 1px solid var(--line);
+    background: var(--panel); color: var(--fg); cursor: pointer;
+  }
+  .mini:active { transform: scale(.97); }
   .sub { color: var(--muted); font-size: 12.5px; margin: 4px 0 16px; line-height: 1.6; }
 
   .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .stat {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 12px 14px;
-  }
+  .stat { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
   .stat i { font-style: normal; font-size: 11px; color: var(--muted); display: block; }
   .stat b { font-size: 24px; font-variant-numeric: tabular-nums; display: block; margin-top: 2px; }
   .stat small { font-size: 11px; color: var(--muted); }
 
   .actions { display: flex; gap: 10px; margin: 16px 0 22px; }
-  button {
-    flex: 1;
-    font: inherit;
-    font-size: 15px;
-    padding: 13px 10px;
-    border-radius: 13px;
-    border: 1px solid var(--line);
-    background: var(--panel);
-    color: var(--fg);
-    cursor: pointer;
+  button.act {
+    flex: 1; font: inherit; font-size: 15px; padding: 13px 10px;
+    border-radius: 13px; border: 1px solid var(--line);
+    background: var(--panel); color: var(--fg); cursor: pointer;
   }
   button.primary { background: linear-gradient(180deg, #2f7cf6, #1f5fd0); border-color: #3b86ff; font-weight: 700; }
   button:disabled { opacity: .45; }
@@ -62,24 +56,14 @@
   h2 { font-size: 12px; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; margin: 0 0 10px; }
   ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
   li {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 11px 13px;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    background: var(--panel);
-    opacity: .55;
+    display: flex; align-items: center; gap: 12px; padding: 11px 13px;
+    border: 1px solid var(--line); border-radius: 12px; background: var(--panel); opacity: .5;
   }
   li.on { opacity: 1; border-color: rgba(255, 209, 102, .45); background: linear-gradient(180deg, #1d2532, #171e28); }
   .ico {
-    width: 38px; height: 38px; flex: none;
-    display: grid; place-items: center;
-    border-radius: 10px;
-    background: #0f1520;
-    border: 1px solid var(--line);
-    font-size: 19px;
-    filter: grayscale(1);
+    width: 38px; height: 38px; flex: none; display: grid; place-items: center;
+    border-radius: 10px; background: #0f1520; border: 1px solid var(--line);
+    font-size: 19px; filter: grayscale(1);
   }
   li.on .ico { filter: none; border-color: rgba(255, 209, 102, .5); background: #241d0d; }
   .txt { min-width: 0; }
@@ -90,29 +74,16 @@
   .hint { color: var(--muted); font-size: 11.5px; line-height: 1.7; margin-top: 18px; }
   .hint code { background: #1b2432; padding: 1px 5px; border-radius: 5px; }
 
-  /* Steam 风格成就弹窗 */
   #toasts {
-    position: fixed;
-    right: 14px;
-    bottom: calc(14px + env(safe-area-inset-bottom));
-    left: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    pointer-events: none;
-    z-index: 50;
+    position: fixed; right: 14px; bottom: calc(14px + env(safe-area-inset-bottom)); left: 14px;
+    display: flex; flex-direction: column; gap: 10px; pointer-events: none; z-index: 50;
   }
   .toast {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
-    border-radius: 12px;
+    display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px;
     background: linear-gradient(135deg, #1b2531 0%, #121a24 100%);
     border: 1px solid rgba(255, 209, 102, .4);
     box-shadow: 0 14px 34px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .06);
-    transform: translateY(24px);
-    opacity: 0;
+    transform: translateY(24px); opacity: 0;
     transition: transform .32s cubic-bezier(.2, .9, .3, 1.2), opacity .32s ease;
   }
   .toast.show { transform: none; opacity: 1; }
@@ -120,28 +91,30 @@
   .toast .kick { font-size: 10px; letter-spacing: .16em; color: var(--gold); text-transform: uppercase; }
   .toast .name { font-size: 14.5px; margin-top: 2px; }
   .toast .desc { font-size: 11.5px; }
-  @media (min-width: 620px) {
-    #toasts { left: auto; width: 360px; }
-  }
+  @media (min-width: 620px) { #toasts { left: auto; width: 360px; } }
 </style>
 </head>
 <body>
 <header>
   <h1>地球Online</h1>
-  <span class="ver">成就系统 · v1.0</span>
+  <span class="ver">成就系统 · v1.1</span>
+  <div class="head-actions">
+    <button class="mini" id="sound" title="音效开关">🔊</button>
+    <button class="mini" id="share">分享</button>
+  </div>
 </header>
 <p class="sub">用手机传感器记录你的现实行动：走路、移动、熬夜、早起。达成即弹「成就解锁」。<br>数据只存在本机，不上传。</p>
 
 <section class="grid">
-  <div class="stat"><i>今日步数</i><b id="s-steps">0</b><small>靠手机加速度估算</small></div>
-  <div class="stat"><i>移动距离</i><b id="s-dist">0 m</b><small>靠定位位移累计</small></div>
+  <div class="stat"><i>今日步数</i><b id="s-steps">0</b><small>加速度估算</small></div>
+  <div class="stat"><i>移动距离</i><b id="s-dist">0 m</b><small>定位位移累计</small></div>
   <div class="stat"><i>在线时长</i><b id="s-time">0 分</b><small>页面活跃时间</small></div>
-  <div class="stat"><i>已解锁</i><b id="s-ach">0 / 10</b><small>成就进度</small></div>
+  <div class="stat"><i>已解锁</i><b id="s-ach">0 / 0</b><small>成就进度</small></div>
 </section>
 
 <div class="actions">
-  <button id="start" class="primary">开始游玩</button>
-  <button id="stop" disabled>暂停</button>
+  <button id="start" class="act primary">开始游玩</button>
+  <button id="stop" class="act" disabled>暂停</button>
 </div>
 
 <h2>成就列表</h2>
@@ -159,41 +132,64 @@
 (function () {
   'use strict';
 
+  var DATE = new Date();
+  var today = DATE.getFullYear() + '-' + (DATE.getMonth() + 1) + '-' + DATE.getDate();
+
   var ACH = [
-    { id: 'login',  icon: '🌍', name: '初次登录',     desc: '你打开了地球Online。', xp: 10,  run: function () { return true; } },
-    { id: 'step10', icon: '👣', name: '迈出第一步',   desc: '累计 10 步。',        xp: 20,  run: function (s) { return s.steps >= 10; } },
-    { id: 'step1k', icon: '🏃', name: '千步行者',     desc: '单次游玩走满 1000 步。', xp: 60, run: function (s) { return s.steps >= 1000; } },
-    { id: 'step5k', icon: '🥾', name: '万里长征',     desc: '单次游玩走满 5000 步。', xp: 200, run: function (s) { return s.steps >= 5000; } },
-    { id: 'move500', icon: '📍', name: '位移人生',     desc: '移动超过 500 米。',   xp: 50,  run: function (s) { return s.distance >= 500; } },
-    { id: 'move2k', icon: '🗺️', name: '城市漫游者',   desc: '移动超过 2 公里。',   xp: 150, run: function (s) { return s.distance >= 2000; } },
-    { id: 'early',  icon: '🌅', name: '早起的鸟',     desc: '早上 6:30 前开始游玩。', xp: 80, run: function (s) { return s.earlyBird; } },
-    { id: 'night',  icon: '🌙', name: '夜行生物',     desc: '晚上 23:30 后还在游玩。', xp: 80, run: function (s) { return s.nightOwl; } },
-    { id: 'focus',  icon: '⏳', name: '持之以恒',     desc: '连续在线 30 分钟。', xp: 120, run: function (s) { return s.activeMs >= 30 * 60 * 1000; } },
-    { id: 'lowbat', icon: '🔋', name: '电量告急',     desc: '电量低于 15% 仍在坚持。', xp: 60, run: function (s) { return s.battery < 0.15; } }
+    { id: 'login',      icon: '🌍', name: '初次登录',       desc: '你打开了地球Online。',                 xp: 10,  run: function () { return true; } },
+    { id: 'session2',   icon: '🔁', name: '再来一次',       desc: '第二次开始游玩。',                     xp: 20,  run: function (s, m) { return m.sessions >= 2; } },
+    { id: 'session10',  icon: '🏠', name: '常驻居民',       desc: '累计开始游玩 10 次。',                 xp: 120, run: function (s, m) { return m.sessions >= 10; } },
+    { id: 'streak3',    icon: '📅', name: '三日连击',       desc: '连续 3 天登录地球。',                  xp: 100, run: function (s, m) { return m.streak >= 3; } },
+    { id: 'streak7',    icon: '🗓️', name: '七日不辍',       desc: '连续 7 天登录地球。',                  xp: 300, run: function (s, m) { return m.streak >= 7; } },
+    { id: 'step10',     icon: '👣', name: '迈出第一步',     desc: '累计 10 步。',                         xp: 20,  run: function (s) { return s.steps >= 10; } },
+    { id: 'step100',    icon: '💨', name: '百步穿杨',       desc: '单次游玩 100 步。',                    xp: 30,  run: function (s) { return s.steps >= 100; } },
+    { id: 'step1k',     icon: '🏃', name: '千步行者',       desc: '单次游玩 1000 步。',                   xp: 60,  run: function (s) { return s.steps >= 1000; } },
+    { id: 'step5k',     icon: '🥾', name: '万里长征',       desc: '单次游玩 5000 步。',                   xp: 200, run: function (s) { return s.steps >= 5000; } },
+    { id: 'step10k',    icon: '🔥', name: '一日万步',       desc: '单次游玩 10000 步。',                  xp: 400, run: function (s) { return s.steps >= 10000; } },
+    { id: 'move100',    icon: '📍', name: '出门走走',       desc: '移动超过 100 米。',                    xp: 20,  run: function (s) { return s.distance >= 100; } },
+    { id: 'move500',    icon: '🧭', name: '位移人生',       desc: '移动超过 500 米。',                    xp: 50,  run: function (s) { return s.distance >= 500; } },
+    { id: 'move2k',     icon: '🗺️', name: '城市漫游者',     desc: '移动超过 2 公里。',                    xp: 150, run: function (s) { return s.distance >= 2000; } },
+    { id: 'move5k',     icon: '🚶', name: '五公里俱乐部',   desc: '移动超过 5 公里。',                    xp: 300, run: function (s) { return s.distance >= 5000; } },
+    { id: 'move10k',    icon: '🏅', name: '十公里挑战',     desc: '移动超过 10 公里。',                   xp: 600, run: function (s) { return s.distance >= 10000; } },
+    { id: 'gps',        icon: '🛰️', name: '卫星已锁定',     desc: '第一次成功取得定位。',                 xp: 40,  run: function (s) { return s.gotFix; } },
+    { id: 'early',      icon: '🌅', name: '早起的鸟',       desc: '早上 6:30 前开始游玩。',               xp: 80,  run: function (s) { return s.earlyBird; } },
+    { id: 'night',      icon: '🌙', name: '夜行生物',       desc: '晚上 23:30 后还在游玩。',              xp: 80,  run: function (s) { return s.nightOwl; } },
+    { id: 'midnight',   icon: '☕', name: '凌晨三点',       desc: '凌晨 3–4 点还没睡。',                  xp: 150, run: function (s) { return s.deepNight; } },
+    { id: 'noon',       icon: '☀️', name: '午间散步',       desc: '中午 12–13 点在游玩。',                xp: 60,  run: function (s) { return s.noonWalk; } },
+    { id: 'focus5',     icon: '⏱️', name: '专注五分钟',     desc: '连续在线 5 分钟。',                    xp: 30,  run: function (s) { return s.activeMs >= 5 * 60 * 1000; } },
+    { id: 'focus30',    icon: '⏳', name: '持之以恒',       desc: '连续在线 30 分钟。',                   xp: 120, run: function (s) { return s.activeMs >= 30 * 60 * 1000; } },
+    { id: 'focus60',    icon: '🕐', name: '一小时玩家',     desc: '连续在线 1 小时。',                    xp: 240, run: function (s) { return s.activeMs >= 60 * 60 * 1000; } },
+    { id: 'focus120',   icon: '🗿', name: '不动如山',       desc: '连续在线 2 小时。',                    xp: 500, run: function (s) { return s.activeMs >= 120 * 60 * 1000; } },
+    { id: 'lowbat',     icon: '🔋', name: '电量告急',       desc: '电量低于 15% 仍在坚持。',              xp: 60,  run: function (s) { return s.battery < 0.15; } },
+    { id: 'charging',   icon: '🔌', name: '边充边玩',       desc: '边充电边在地球上活动。',               xp: 40,  run: function (s) { return s.charging; } },
+    { id: 'background', icon: '↩️', name: '出去又回来',     desc: '切到别的 App 后又回来继续。',          xp: 30,  run: function (s) { return s.wentBackground; } },
+    { id: 'share',      icon: '📤', name: '传教士',         desc: '把地球Online分享出去。',               xp: 50,  run: function (s) { return s.shared; } },
+    { id: 'collector',  icon: '🏆', name: '全成就收集者',   desc: '解锁其余全部成就。',                   xp: 1000, run: function (s, m, saved) {
+      var total = ACH.length - 1;
+      var got = 0;
+      for (var i = 0; i < ACH.length; i++) if (ACH[i].id !== 'collector' && saved[ACH[i].id]) got++;
+      return got >= total;
+    } }
   ];
 
   var KEY = 'earth-online-v1';
+  var META_KEY = 'earth-online-meta-v1';
+  var SOUND_KEY = 'earth-online-sound';
+
   var saved = {};
+  var meta = { sessions: 0, lastDay: '', streak: 0 };
   try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { saved = {}; }
+  try { meta = Object.assign(meta, JSON.parse(localStorage.getItem(META_KEY) || '{}') || {}); } catch (e) { /* ignore */ }
 
   var state = {
-    steps: 0,
-    distance: 0,
-    activeMs: 0,
-    battery: 1,
-    earlyBird: false,
-    nightOwl: false,
+    steps: 0, distance: 0, activeMs: 0, battery: 1,
+    earlyBird: false, nightOwl: false, deepNight: false, noonWalk: false,
+    gotFix: false, charging: false, wentBackground: false, shared: false,
     running: false
   };
 
-  var startedAt = 0;
-  var lastTick = 0;
-  var lastStepAt = 0;
-  var lastAcc = 0;
-  var lastPos = null;
-  var watchId = null;
-  var motionBound = false;
-  var timer = null;
+  var soundOn = localStorage.getItem(SOUND_KEY) !== 'off';
+  var lastTick = 0, lastStepAt = 0, lastAcc = 0, lastPos = null, watchId = null, timer = null;
 
   var els = {
     steps: document.getElementById('s-steps'),
@@ -203,12 +199,12 @@
     list: document.getElementById('list'),
     start: document.getElementById('start'),
     stop: document.getElementById('stop'),
-    toasts: document.getElementById('toasts')
+    toasts: document.getElementById('toasts'),
+    sound: document.getElementById('sound'),
+    share: document.getElementById('share')
   };
 
-  function fmtDist(m) {
-    return m < 1000 ? Math.round(m) + ' m' : (m / 1000).toFixed(2) + ' km';
-  }
+  function fmtDist(m) { return m < 1000 ? Math.round(m) + ' m' : (m / 1000).toFixed(2) + ' km'; }
   function fmtTime(ms) {
     var min = Math.floor(ms / 60000);
     return min < 60 ? min + ' 分' : Math.floor(min / 60) + ' 时 ' + (min % 60) + ' 分';
@@ -221,8 +217,7 @@
         '<span class="ico">' + a.icon + '</span>' +
         '<span class="txt"><span class="name">' + a.name + '</span>' +
         '<span class="desc">' + (on ? '已解锁 · ' + a.desc : a.desc) + '</span></span>' +
-        '<span class="xp">+' + a.xp + ' XP</span>' +
-        '</li>';
+        '<span class="xp">+' + a.xp + ' XP</span></li>';
     }).join('');
     els.ach.textContent = Object.keys(saved).length + ' / ' + ACH.length;
   }
@@ -231,6 +226,37 @@
     els.steps.textContent = String(state.steps);
     els.dist.textContent = fmtDist(state.distance);
     els.time.textContent = fmtTime(state.activeMs);
+  }
+
+  // Steam 风格：柔和的双音钟声（合成，不用外部音频）
+  function steamChime() {
+    if (!soundOn) return;
+    try {
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      var ctx = new Ctx();
+      var master = ctx.createGain();
+      master.gain.value = 0.9;
+      master.connect(ctx.destination);
+
+      function bell(freq, start, dur, gain) {
+        var osc = ctx.createOscillator();
+        var g = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        g.gain.setValueAtTime(0.0001, ctx.currentTime + start);
+        g.gain.exponentialRampToValueAtTime(gain, ctx.currentTime + start + 0.012);
+        g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + start + dur);
+        osc.connect(g).connect(master);
+        osc.start(ctx.currentTime + start);
+        osc.stop(ctx.currentTime + start + dur + 0.05);
+      }
+      // 学 Steam 的「叮—咚」：高音先响，低音随后托底
+      bell(1318.5, 0, 0.55, 0.22);      // E6
+      bell(1975.5, 0, 0.35, 0.08);      // B6 泛音
+      bell(987.8, 0.085, 0.75, 0.16);   // B5
+      setTimeout(function () { try { ctx.close(); } catch (e) { /* ignore */ } }, 1400);
+    } catch (e) { /* 忽略 */ }
   }
 
   function toast(a) {
@@ -247,41 +273,38 @@
       el.classList.remove('show');
       setTimeout(function () { el.remove(); }, 400);
     }, 4200);
-    beep();
+    steamChime();
   }
 
-  function beep() {
-    try {
-      var Ctx = window.AudioContext || window.webkitAudioContext;
-      if (!Ctx) return;
-      var ctx = new Ctx();
-      var o = ctx.createOscillator();
-      var g = ctx.createGain();
-      o.type = 'sine';
-      o.frequency.setValueAtTime(880, ctx.currentTime);
-      o.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.12);
-      g.gain.setValueAtTime(0.0001, ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.3);
-      o.connect(g).connect(ctx.destination);
-      o.start();
-      o.stop(ctx.currentTime + 0.32);
-    } catch (e) { /* 静音播放被拦也无所谓 */ }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) { /* ignore */ }
   }
 
   function check() {
+    var changed = false;
     for (var i = 0; i < ACH.length; i++) {
       var a = ACH[i];
       if (saved[a.id]) continue;
       var ok = false;
-      try { ok = a.run(state); } catch (e) { ok = false; }
+      try { ok = a.run(state, meta, saved); } catch (e) { ok = false; }
       if (ok) {
         saved[a.id] = Date.now();
-        try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) { /* ignore */ }
+        save();
         toast(a);
-        renderList();
+        changed = true;
       }
     }
+    if (changed) renderList();
+  }
+
+  function timeFlags() {
+    var d = new Date();
+    var h = d.getHours(), m = d.getMinutes();
+    if (h < 6 || (h === 6 && m < 30)) state.earlyBird = true;
+    if (h === 23 && m >= 30) state.nightOwl = true;
+    if (h >= 0 && h < 4) state.nightOwl = true;
+    if (h >= 3 && h < 4) state.deepNight = true;
+    if (h === 12 || (h === 13 && m === 0)) state.noonWalk = true;
   }
 
   function tick() {
@@ -289,13 +312,7 @@
     var now = Date.now();
     state.activeMs += Math.min(now - lastTick, 2000);
     lastTick = now;
-
-    var h = new Date().getHours();
-    var m = new Date().getMinutes();
-    if (h < 6 || (h === 6 && m < 30)) state.earlyBird = true;
-    if (h === 23 && m >= 30) state.nightOwl = true;
-    if (h >= 0 && h < 3) state.nightOwl = true;
-
+    timeFlags();
     renderStats();
     check();
   }
@@ -307,22 +324,19 @@
     var delta = Math.abs(mag - lastAcc);
     lastAcc = mag;
     var now = Date.now();
-    if (delta > 11 && now - lastStepAt > 320) {
-      lastStepAt = now;
-      state.steps += 1;
-    }
+    if (delta > 11 && now - lastStepAt > 320) { lastStepAt = now; state.steps += 1; }
   }
 
   function onPos(p) {
     var c = p.coords;
     if (c.accuracy > 120) return;
+    state.gotFix = true;
     if (lastPos) {
       var R = 6371000;
       var dLat = (c.latitude - lastPos.latitude) * Math.PI / 180;
       var dLon = (c.longitude - lastPos.longitude) * Math.PI / 180;
-      var lat1 = lastPos.latitude * Math.PI / 180;
-      var lat2 = c.latitude * Math.PI / 180;
-      var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+      var lat1 = lastPos.latitude * Math.PI / 180, lat2 = c.latitude * Math.PI / 180;
+      var a = Math.sin(dLat / 2) ** 2 + Math.sin(dLon / 2) ** 2 * Math.cos(lat1) * Math.cos(lat2);
       var d = 2 * R * Math.asin(Math.sqrt(a));
       if (d > 3 && d < 200) state.distance += d;
     }
@@ -335,8 +349,10 @@
         var b = await navigator.getBattery();
         state.battery = b.level;
         b.addEventListener('levelchange', function () { state.battery = b.level; });
+        b.addEventListener('chargingchange', function () { if (b.charging) state.charging = true; });
+        if (b.charging) state.charging = true;
       }
-    } catch (e) { /* 不支持就算了 */ }
+    } catch (e) { /* ignore */ }
   }
 
   async function requestMotion() {
@@ -348,38 +364,49 @@
       }
       window.addEventListener('devicemotion', onMotion);
       return true;
-    } catch (e) {
-      return false;
-    }
+    } catch (e) { return false; }
   }
 
   function startGeo() {
     try {
       if (!navigator.geolocation) return;
-      watchId = navigator.geolocation.watchPosition(onPos, function () { /* 拒绝就算了 */ }, {
+      watchId = navigator.geolocation.watchPosition(onPos, function () {}, {
         enableHighAccuracy: true, maximumAge: 5000, timeout: 15000
       });
     } catch (e) { /* ignore */ }
   }
 
+  function bumpMeta() {
+    var yesterday = new Date(Date.now() - 86400000);
+    var y = yesterday.getFullYear() + '-' + (yesterday.getMonth() + 1) + '-' + yesterday.getDate();
+    if (meta.lastDay === today) {
+      // 今天已经算过一次
+    } else if (meta.lastDay === y) {
+      meta.streak = (meta.streak || 0) + 1;
+      meta.lastDay = today;
+      meta.sessions = (meta.sessions || 0) + 1;
+    } else {
+      meta.streak = 1;
+      meta.lastDay = today;
+      meta.sessions = (meta.sessions || 0) + 1;
+    }
+    try { localStorage.setItem(META_KEY, JSON.stringify(meta)); } catch (e) { /* ignore */ }
+  }
+
   async function start() {
     if (state.running) return;
     state.running = true;
-    startedAt = Date.now();
+    bumpMeta();
     lastTick = Date.now();
     els.start.disabled = true;
     els.stop.disabled = false;
-
-    var motionOk = await requestMotion();
+    await requestMotion();
     startGeo();
     initBattery();
-
-    motionBound = motionOk;
+    timeFlags();
     timer = setInterval(tick, 1000);
     tick();
-    if (!motionOk) {
-      console.warn('[地球Online] 运动传感器不可用，步数不会增长');
-    }
+    check();
   }
 
   function stop() {
@@ -389,31 +416,57 @@
     timer = null;
     els.start.disabled = false;
     els.stop.disabled = true;
-    if (watchId != null && navigator.geolocation) {
-      navigator.geolocation.clearWatch(watchId);
-      watchId = null;
-    }
+    if (watchId != null && navigator.geolocation) { navigator.geolocation.clearWatch(watchId); watchId = null; }
     renderStats();
   }
 
   els.start.addEventListener('click', start);
   els.stop.addEventListener('click', stop);
 
-  // 首次进入即触发「初次登录」
+  els.sound.addEventListener('click', function () {
+    soundOn = !soundOn;
+    localStorage.setItem(SOUND_KEY, soundOn ? 'on' : 'off');
+    els.sound.textContent = soundOn ? '🔊' : '🔇';
+    if (soundOn) steamChime();
+  });
+  els.sound.textContent = soundOn ? '🔊' : '🔇';
+
+  els.share.addEventListener('click', async function () {
+    var url = location.href.split('?')[0];
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: '地球Online · 成就', text: '我在现实里刷成就。', url: url });
+      } else {
+        await navigator.clipboard.writeText(url);
+      }
+      state.shared = true;
+      check();
+    } catch (e) { /* 用户取消 */ }
+  });
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) state.wentBackground = true;
+  });
+
   check();
   renderList();
   renderStats();
 
-  // 调试钩子：?test=1 时可手动解锁一个成就，方便验证弹窗样式
-  window.__EO__ = { state: state, saved: saved, unlock: function (id) {
-    var a = ACH.filter(function (x) { return x.id === id; })[0];
-    if (!a || saved[a.id]) return false;
-    saved[a.id] = Date.now();
-    try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
-    toast(a); renderList(); return true;
-  } };
+  window.__EO__ = {
+    state: state, saved: saved, meta: meta,
+    unlock: function (id) {
+      var a = ACH.filter(function (x) { return x.id === id; })[0];
+      if (!a || saved[a.id]) return false;
+      saved[a.id] = Date.now(); save(); toast(a); renderList(); return true;
+    },
+    unlockAll: function () {
+      ACH.forEach(function (a) { if (!saved[a.id]) { saved[a.id] = Date.now(); toast(a); } });
+      save(); renderList();
+    }
+  };
+
   if (location.search.indexOf('test=1') !== -1) {
-    setTimeout(function () { window.__EO__.unlock('step10'); }, 800);
+    setTimeout(function () { window.__EO__.unlock('step100'); }, 700);
   }
 })();
 </script>
