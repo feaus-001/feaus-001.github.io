@@ -16,6 +16,7 @@
         '<p class="q1">为人民服务</p>' +
         '<p class="q2">世上无难事，只要肯登攀</p>' +
         '<img class="intro-emblem" src="assets/party-emblem.png?v=2" alt="党徽" width="256" height="256">' +
+        '<div class="intro-slogan">你的名字无人知晓，你的功绩永世长存</div>' +
       '</div>' +
     '</div>' +
     '<div class="intro-hint">点击任意处跳过</div>';
@@ -42,5 +43,5 @@
 
   overlay.addEventListener('click', finish);
   document.addEventListener('keydown', finish);
-  window.setTimeout(finish, reduce ? 3000 : 7600);
+  window.setTimeout(finish, reduce ? 3000 : 8800);
 })();
