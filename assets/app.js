@@ -684,9 +684,18 @@
     return (
       renderHero() +
       '<div class="server-card" id="server-card" hidden></div>' +
-      '<div class="world-card"><span class="server-dot live"></span><span class="server-label">我的世界</span>' +
-      '<span class="server-count">心尘世界！</span><span class="server-meta">1.19</span>' +
-      '<span class="server-meta">成就 520</span><span class="server-time">最后游玩 2026-11-12</span></div>' +
+      '<div class="world-card">' +
+        '<div class="world-head"><span class="server-dot live"></span><b>我的世界</b><span class="world-tag">Java 1.19</span></div>' +
+        '<div class="world-title">心尘世界！</div>' +
+        '<div class="world-sub">心尘山领袖 · 心辰</div>' +
+        '<div class="world-stats">' +
+          '<span><i>世界天数</i><b>1</b></span>' +
+          '<span><i>已获成就</i><b>520</b></span>' +
+          '<span><i>存档角色</i><b>2</b></span>' +
+          '<span><i>最后游玩</i><b>11-12</b></span>' +
+        '</div>' +
+        '<div class="world-foot">Forge 41 · OptiFine H8　|　存档只读同步，不写游戏文件</div>' +
+      '</div>' +
       '<h2 class="section-title">' + escapeHtml(sectionLabel('posts', '文章')) + '</h2>' +
       '<div class="post-list">' + (cards || '<p class="empty">还没有文章。</p>') + '</div>'
     );
