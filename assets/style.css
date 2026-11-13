@@ -682,7 +682,7 @@ html.intro-active body { overflow: hidden; }
   background: url('intro-bg.jpg') center 32% / cover no-repeat;
   opacity: 0;
   mix-blend-mode: screen;
-  animation: intro-glitch-flash 6.2s steps(1, end) infinite;
+  animation: intro-glitch-flash 2.6s steps(1, end) infinite;
 }
 .intro-glitch::before,
 .intro-glitch::after {
@@ -696,11 +696,11 @@ html.intro-active body { overflow: hidden; }
 }
 .intro-glitch::before {
   filter: hue-rotate(165deg) saturate(3.4) brightness(1.15) contrast(1.1);
-  animation: intro-glitch-a 6.2s steps(1, end) infinite;
+  animation: intro-glitch-a 2.6s steps(1, end) infinite;
 }
 .intro-glitch::after {
   filter: hue-rotate(-35deg) saturate(3.4) brightness(1.08) contrast(1.1);
-  animation: intro-glitch-b 6.2s steps(1, end) infinite;
+  animation: intro-glitch-b 2.6s steps(1, end) infinite;
 }
 
 @keyframes intro-glitch-flash {
@@ -828,6 +828,15 @@ html.intro-active body { overflow: hidden; }
   font-size: clamp(12px, 2.1vw, 21px);
   opacity: 0;
   animation: intro-quote-in 1.8s ease forwards 3.4s;
+}
+
+.intro-emblem {
+  width: clamp(34px, 5.2vw, 52px);
+  height: auto;
+  margin-top: 12px;
+  opacity: 0;
+  filter: drop-shadow(0 0 10px rgba(255, 190, 20, 0.55));
+  animation: intro-quote-in 1.8s ease forwards 4.7s;
 }
 @keyframes intro-quote-in {
   from { opacity: 0; filter: blur(6px); transform: translateY(6px); }
