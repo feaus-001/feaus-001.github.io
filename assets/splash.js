@@ -28,6 +28,11 @@
     overlay.classList.add('is-out');
     document.documentElement.classList.remove('intro-active');
     document.documentElement.classList.add('intro-done');
+    // 这一刻（点击或自动结束）算一次用户手势，顺手信任音乐播放
+    try {
+      if (window.__DSH_PLAY__) window.__DSH_PLAY__();
+      document.dispatchEvent(new Event('dsh:intro-done'));
+    } catch (error) { /* ignore */ }
     window.setTimeout(function () {
       if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
     }, 1000);

@@ -943,6 +943,7 @@
         function resume(event) {
           document.removeEventListener('pointerdown', resume);
           document.removeEventListener('keydown', resume);
+          document.removeEventListener('touchstart', resume);
           var target = event && event.target;
           if (target && target.closest && target.closest('.music-player')) return;
           audio.play().then(function () {
@@ -951,8 +952,18 @@
         }
         document.addEventListener('pointerdown', resume);
         document.addEventListener('keydown', resume);
+        document.addEventListener('touchstart', resume, { passive: true });
       });
     }
+
+    // 开场动画结束时（点击跳过/自动结束）都算一次用户手势，顺手把音乐放起来
+    window.__DSH_PLAY__ = function () {
+      if (!audio.paused) return;
+      audio.play().then(function () {
+        root.removeAttribute('data-blocked');
+      }).catch(function () { /* 仍然被拦就算了，保留脉冲提示 */ });
+    };
+    document.addEventListener('dsh:intro-done', window.__DSH_PLAY__);
 
     load(0, false);
     tryAutoplay();
