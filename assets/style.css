@@ -1,3 +1,10 @@
+@font-face {
+  font-family: 'Fusion Pixel';
+  src: url('fonts/fusion-pixel.woff2') format('woff2');
+  font-display: swap;
+  font-weight: 400;
+}
+
 :root {
   --bg: #fbfbfd;
   --fg: #17191f;
@@ -31,7 +38,7 @@ html, body { margin: 0; padding: 0; }
 body {
   background: var(--bg);
   color: var(--fg);
-  font-family: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-family: 'Fusion Pixel', system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
   font-size: 16px;
   line-height: 1.75;
   -webkit-font-smoothing: antialiased;
@@ -443,7 +450,7 @@ html.rainbow-frame body::after {
   display: flex;
   align-items: center;
   gap: 8px;
-  max-width: min(380px, calc(100vw - 32px));
+  max-width: min(460px, calc(100vw - 32px));
   padding: 8px 10px;
   border: 1px solid var(--border);
   border-radius: 14px;
@@ -491,10 +498,12 @@ html.rainbow-frame body::after {
 .mp-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; line-height: 1.3; }
 .mp-time { font-size: 11px; line-height: 1.3; color: var(--muted); font-variant-numeric: tabular-nums; }
 .mp-progress { width: 84px; flex: none; accent-color: var(--accent); }
+.mp-volume { width: 64px; flex: none; accent-color: var(--accent); }
 
 @media (max-width: 720px) {
   .music-player { right: 10px; bottom: 10px; padding: 6px 8px; gap: 6px; max-width: calc(100vw - 20px); }
   .mp-progress { display: none; }
+  .mp-volume { width: 52px; }
   .mp-title { max-width: 120px; }
 }
 

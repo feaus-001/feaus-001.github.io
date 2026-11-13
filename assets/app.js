@@ -812,6 +812,7 @@
       '<button type="button" class="mp-btn mp-play" aria-label="播放">▶</button>' +
       '<span class="mp-info"><span class="mp-title"></span><span class="mp-time">0:00 / 0:00</span></span>' +
       '<input class="mp-progress" type="range" min="0" max="1000" value="0" aria-label="播放进度">' +
+      '<input class="mp-volume" type="range" min="0" max="100" value="70" aria-label="音量">' +
       '<button type="button" class="mp-btn mp-next" aria-label="下一首">⏭</button>';
     document.body.appendChild(root);
 
@@ -819,8 +820,23 @@
     var timeEl = root.querySelector('.mp-time');
     var playBtn = root.querySelector('.mp-play');
     var progress = root.querySelector('.mp-progress');
+    var volume = root.querySelector('.mp-volume');
     var index = 0;
     var dragging = false;
+
+    var savedVolume = 70;
+    try {
+      var storedVolume = localStorage.getItem('blog-volume');
+      if (storedVolume !== null) savedVolume = Math.max(0, Math.min(100, Number(storedVolume)));
+    } catch (error) { /* ignore */ }
+    audio.volume = savedVolume / 100;
+    volume.value = String(savedVolume);
+    volume.addEventListener('input', function () {
+      var next = Number(volume.value) / 100;
+      audio.volume = next;
+      audio.muted = next === 0;
+      try { localStorage.setItem('blog-volume', volume.value); } catch (error) { /* ignore */ }
+    });
 
     function formatTime(seconds) {
       var value = Number.isFinite(seconds) && seconds > 0 ? seconds : 0;
