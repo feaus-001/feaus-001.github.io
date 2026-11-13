@@ -15,7 +15,7 @@
       '<div class="intro-quote">' +
         '<p class="q1">为人民服务</p>' +
         '<p class="q2">世上无难事，只要肯登攀</p>' +
-        '<img class="intro-emblem" src="assets/party-emblem.png" alt="党徽" width="256" height="256">' +
+        '<img class="intro-emblem" src="assets/party-emblem.png?v=2" alt="党徽" width="256" height="256">' +
       '</div>' +
     '</div>' +
     '<div class="intro-hint">点击任意处跳过</div>';
