@@ -673,8 +673,59 @@ html.intro-active body { overflow: hidden; }
   to { transform: scale(1.0); }
 }
 
-.intro-tint {
+/* VR 数字故障：周期性 RGB 撕裂，一下就好 */
+.intro-glitch {
   position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: url('intro-bg.jpg') center 32% / cover no-repeat;
+  opacity: 0;
+  mix-blend-mode: screen;
+  animation: intro-glitch-flash 6.2s steps(1, end) infinite;
+}
+.intro-glitch::before,
+.intro-glitch::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: inherit;
+  background-position: inherit;
+  background-size: inherit;
+  opacity: 0;
+}
+.intro-glitch::before {
+  filter: hue-rotate(165deg) saturate(3.4) brightness(1.15) contrast(1.1);
+  animation: intro-glitch-a 6.2s steps(1, end) infinite;
+}
+.intro-glitch::after {
+  filter: hue-rotate(-35deg) saturate(3.4) brightness(1.08) contrast(1.1);
+  animation: intro-glitch-b 6.2s steps(1, end) infinite;
+}
+
+@keyframes intro-glitch-flash {
+  0%, 6% { opacity: 0.42; }
+  7% { opacity: 0.2; }
+  8%, 100% { opacity: 0; }
+}
+@keyframes intro-glitch-a {
+  0% { opacity: 0.95; transform: translate(-16px, 0); clip-path: inset(10% 0 68% 0); }
+  1.5% { opacity: 0.75; transform: translate(18px, -2px); clip-path: inset(22% 0 56% 0); }
+  3% { opacity: 0.9; transform: translate(-10px, 2px); clip-path: inset(4% 0 80% 0); }
+  4.5% { opacity: 0.6; transform: translate(12px, -1px); clip-path: inset(32% 0 48% 0); }
+  6% { opacity: 0.4; transform: translate(0, 0); clip-path: inset(14% 0 70% 0); }
+  7%, 100% { opacity: 0; transform: translate(0, 0); clip-path: inset(0 0 100% 0); }
+}
+@keyframes intro-glitch-b {
+  0% { opacity: 0.9; transform: translate(14px, 1px); clip-path: inset(66% 0 12% 0); }
+  1.5% { opacity: 0.7; transform: translate(-20px, 3px); clip-path: inset(58% 0 24% 0); }
+  3% { opacity: 0.85; transform: translate(9px, -2px); clip-path: inset(74% 0 8% 0); }
+  4.5% { opacity: 0.55; transform: translate(-12px, 0); clip-path: inset(50% 0 32% 0); }
+  6% { opacity: 0.35; transform: translate(0, 0); clip-path: inset(62% 0 18% 0); }
+  7%, 100% { opacity: 0; transform: translate(0, 0); clip-path: inset(0 0 100% 0); }
+}
+
+.intro-tint {  position: absolute;
   inset: 0;
   background:
     radial-gradient(ellipse at 32% 38%, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.72) 72%),

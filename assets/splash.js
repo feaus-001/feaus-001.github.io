@@ -8,6 +8,7 @@
   overlay.className = 'intro';
   overlay.innerHTML =
     '<div class="intro-bg"></div>' +
+    '<div class="intro-glitch"></div>' +
     '<div class="intro-tint"></div>' +
     '<div class="intro-center">' +
       '<div class="intro-title" data-text="欢迎访问心尘山终端">欢迎访问心尘山终端</div>' +
