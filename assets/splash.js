@@ -4,6 +4,16 @@
 
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // 每次打开浏览器只播一次：同一标签页/新标签页跳转都不再重复
+  var SEEN_KEY = 'dsh-intro-shown';
+  try {
+    if (window.sessionStorage.getItem(SEEN_KEY) === '1') {
+      document.documentElement.classList.add('intro-done');
+      return;
+    }
+    window.sessionStorage.setItem(SEEN_KEY, '1');
+  } catch (error) { /* 隐私模式下 sessionStorage 不可用，就每次都播 */ }
+
   var overlay = document.createElement('div');
   overlay.className = 'intro';
   overlay.innerHTML =
