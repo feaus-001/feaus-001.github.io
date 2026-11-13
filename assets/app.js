@@ -684,6 +684,9 @@
     return (
       renderHero() +
       '<div class="server-card" id="server-card" hidden></div>' +
+      '<div class="world-card"><span class="server-dot live"></span><span class="server-label">我的世界</span>' +
+      '<span class="server-count">心尘世界！</span><span class="server-meta">1.19</span>' +
+      '<span class="server-meta">成就 520</span><span class="server-time">最后游玩 2026-11-12</span></div>' +
       '<h2 class="section-title">' + escapeHtml(sectionLabel('posts', '文章')) + '</h2>' +
       '<div class="post-list">' + (cards || '<p class="empty">还没有文章。</p>') + '</div>'
     );
