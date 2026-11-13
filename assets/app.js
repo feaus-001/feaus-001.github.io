@@ -657,7 +657,8 @@
         '<p class="hero-tagline">' + escapeHtml(site.tagline) + '</p>' +
         '<p class="hero-bio">' + escapeHtml(site.bio) + '</p>' +
         '<div class="hero-links">' + links() + '</div>' +
-        (featureOn('guestbook') ? '<div class="hero-links"><a class="chip" href="#/guestbook">留言板</a></div>' : '') +
+        '<div class="hero-links"><a class="chip" href="assets/earth-online.html">地球Online</a>' +
+        (featureOn('guestbook') ? '<a class="chip" href="#/guestbook">留言板</a>' : '') + '</div>' +
       '</section>'
     );
   }
