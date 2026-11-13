@@ -5,14 +5,6 @@
   font-weight: 400;
 }
 
-/* 开场语录用的方正姚体（只切了这十几个字，2 KB） */
-@font-face {
-  font-family: 'YaoTi Quote';
-  src: url('fonts/yaoti-quote.woff2') format('woff2');
-  font-display: swap;
-  font-weight: 400;
-}
-
 :root {
   --bg: #fbfbfd;
   --fg: #17191f;
@@ -859,7 +851,7 @@ html.intro-active body { overflow: hidden; }
 .intro-quote p {
   margin: 0;
   color: #ffcf40;
-  font-family: 'YaoTi Quote', '方正姚体', 'FZYTK', 'Fusion Pixel', system-ui, sans-serif;
+  font-family: 'Fusion Pixel', system-ui, sans-serif;
   font-size: clamp(15px, 2.7vw, 28px);
   letter-spacing: 0.2em;
   text-shadow: 0 0 18px rgba(255, 190, 20, 0.5), 0 0 3px rgba(255, 220, 120, 0.6);
