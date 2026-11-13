@@ -685,22 +685,6 @@
       '</div>';
   }
 
-  function renderCjCard() {
-    var cj = site.cjCard;
-    if (!cj || cj.enabled === false) return '';
-    var tags = String(cj.tags || '').split(',').filter(Boolean);
-    return '<section class="cj-card">' +
-      '<div class="cj-star"><span>★</span></div>' +
-      '<div class="cj-body">' +
-        '<div class="cj-kicker">' + escapeHtml(cj.kicker || '') + '</div>' +
-        '<div class="cj-title">' + escapeHtml(cj.title || '长征姬') + '</div>' +
-        '<div class="cj-sub">' + escapeHtml(cj.subtitle || '') + '</div>' +
-        (tags.length ? '<div class="cj-tags">' + tags.map(function (t) { return '<span>' + escapeHtml(t.trim()) + '</span>'; }).join('') + '</div>' : '') +
-      '</div>' +
-      (cj.link ? '<a class="cj-link" href="' + escapeHtml(cj.link) + '" target="_blank" rel="noreferrer">查看模组 →</a>' : '') +
-      '</section>';
-  }
-
   function renderList() {
     var cards = posts.map(function (post) {
       return (
@@ -718,7 +702,6 @@
       renderHero() +
       '<div class="server-card" id="server-card" hidden></div>' +
       renderWorldCard() +
-      renderCjCard() +
       '<h2 class="section-title">' + escapeHtml(sectionLabel('posts', '文章')) + '</h2>' +
       '<div class="post-list">' + (cards || '<p class="empty">还没有文章。</p>') + '</div>'
     );
