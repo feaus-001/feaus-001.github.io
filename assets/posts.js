@@ -16,7 +16,7 @@ window.BLOG = {
     countdown: { enabled: true },
     mcWorld: { enabled: true, world: "心尘世界！", version: "1.19", leaderTitle: "心尘山领袖", leader: "心辰Stellan", days: "273", achievements: "520", players: "1", lastPlayed: "11-12", pack: "Forge 41 · OptiFine H8" },
     inboxPin: "xinchen-2026-secure",
-    supabase: { url: "https://fzbvrgcdnwaxyhlhfmhw.supabase.co", key: "sb_publishable_cA0BnfnCO4MPZGbbSWCAjQ_pkOOVRT1" },
+    supabase: { url: "https://xinchenshan.pages.dev/sb", key: "sb_publishable_cA0BnfnCO4MPZGbbSWCAjQ_pkOOVRT1" },
   },
   posts: [
     {
