@@ -813,6 +813,53 @@
     eventsTimer = setInterval(paint, 1000);
   }
 
+  function renderClock() {
+    if (site.clock && site.clock.enabled === false) return '';
+    var ticks = '';
+    for (var i = 0; i < 60; i++) {
+      var big = i % 5 === 0;
+      ticks += '<line x1="50" y1="' + (big ? 7 : 9) + '" x2="50" y2="' + (big ? 13 : 11) + '" ' +
+        'transform="rotate(' + (i * 6) + ' 50 50)" class="clock-tick' + (big ? ' is-big' : '') + '"/>';
+    }
+    return '<div class="clock-wrap">' +
+      '<svg viewBox="0 0 100 100" class="clock-face" role="img" aria-label="当前时间">' +
+        '<circle cx="50" cy="50" r="46" class="clock-rim"/>' +
+        ticks +
+        '<line id="clock-hour" x1="50" y1="50" x2="50" y2="30" class="clock-hand clock-hour"/>' +
+        '<line id="clock-min" x1="50" y1="50" x2="50" y2="20" class="clock-hand clock-min"/>' +
+        '<line id="clock-sec" x1="50" y1="56" x2="50" y2="15" class="clock-hand clock-sec"/>' +
+        '<circle cx="50" cy="50" r="2.8" class="clock-pin"/>' +
+      '</svg>' +
+      '<div class="clock-caption" id="clock-text">--:--:--</div>' +
+      '</div>';
+  }
+
+  var clockTimer = null;
+  function startClock() {
+    if (clockTimer) { clearInterval(clockTimer); clockTimer = null; }
+    var hour = document.getElementById('clock-hour');
+    var min = document.getElementById('clock-min');
+    var sec = document.getElementById('clock-sec');
+    var text = document.getElementById('clock-text');
+    if (!hour || !min || !sec) return;
+
+    function paint() {
+      var d = new Date();
+      var s = d.getSeconds() + d.getMilliseconds() / 1000;
+      var m = d.getMinutes() + s / 60;
+      var h = (d.getHours() % 12) + m / 60;
+      sec.setAttribute('transform', 'rotate(' + (s * 6) + ' 50 50)');
+      min.setAttribute('transform', 'rotate(' + (m * 6) + ' 50 50)');
+      hour.setAttribute('transform', 'rotate(' + (h * 30) + ' 50 50)');
+      if (text) {
+        text.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+      }
+    }
+
+    paint();
+    clockTimer = setInterval(paint, 1000);
+  }
+
   function renderWorldCard() {    var mc = site.mcWorld;
     if (!mc || mc.enabled === false) return '';
     return '<div class="world-card">' +
@@ -847,6 +894,7 @@
       renderCountdown() +
       renderEvents() +
       renderMemorial() +
+      renderClock() +
       '<div class="server-card" id="server-card" hidden></div>' +
       renderWorldCard() +
       '<h2 class="section-title">' + escapeHtml(sectionLabel('posts', '文章')) + '</h2>' +
@@ -945,6 +993,7 @@
       mountServerCard();
       startCountdown();
       startEvents();
+      startClock();
     }
 
     var navLinks = document.querySelectorAll('.nav-link');

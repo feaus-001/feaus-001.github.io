@@ -1272,3 +1272,48 @@ html.intro-done .site-footer {
   .event-nums b { font-size: 17px; }
   .memorial { padding: 16px 12px; }
 }
+
+
+/* 圆盘时钟 */
+.clock-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0 6px;
+}
+.clock-face {
+  width: clamp(120px, 34vw, 160px);
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.35));
+}
+.clock-rim {
+  fill: rgba(255, 255, 255, 0.03);
+  stroke: var(--border);
+  stroke-width: 2;
+}
+.clock-tick {
+  stroke: var(--muted);
+  stroke-width: 0.8;
+  opacity: 0.5;
+}
+.clock-tick.is-big {
+  stroke: var(--fg);
+  stroke-width: 1.6;
+  opacity: 0.8;
+}
+.clock-hand {
+  stroke-linecap: round;
+  transform-origin: 50px 50px;
+}
+.clock-hour { stroke: var(--fg); stroke-width: 3.2; }
+.clock-min { stroke: var(--fg); stroke-width: 2.2; opacity: 0.9; }
+.clock-sec { stroke: #e2556a; stroke-width: 1.2; }
+.clock-pin { fill: #e2556a; }
+.clock-caption {
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
