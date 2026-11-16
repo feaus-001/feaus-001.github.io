@@ -1305,7 +1305,6 @@ html.intro-done .site-footer {
 }
 .clock-hand {
   stroke-linecap: round;
-  transform-origin: 50px 50px;
 }
 .clock-hour { stroke: var(--fg); stroke-width: 3.2; }
 .clock-min { stroke: var(--fg); stroke-width: 2.2; opacity: 0.9; }
