@@ -1185,3 +1185,90 @@ html.intro-done .site-footer {
   .cd-row { flex-direction: column; align-items: flex-start; gap: 6px; padding: 10px 14px; }
   .cd-nums b { font-size: 18px; }
 }
+
+
+/* 事件纪年 */
+.events {
+  margin: 12px 0 6px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  overflow: hidden;
+}
+.event-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+}
+.event-row + .event-row { border-top: 1px solid var(--border); }
+.event-label { font-size: 13px; color: var(--muted); }
+.event-label b { color: var(--fg); font-weight: 600; }
+.event-nums {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+.event-nums b {
+  font-size: 19px;
+  line-height: 1;
+  color: var(--accent);
+  min-width: 1.7ch;
+  text-align: right;
+  font-weight: 700;
+}
+.event-nums i {
+  font-style: normal;
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0 4px 0 1px;
+}
+
+/* 纪念名单 */
+.memorial {
+  margin: 26px 0 10px;
+  padding: 18px 18px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(120, 30, 30, 0.10), rgba(0, 0, 0, 0)),
+    var(--card);
+  text-align: center;
+}
+.memorial-sub {
+  margin: 2px 0 14px;
+  font-size: 12.5px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+.memorial-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 18px;
+}
+.memorial-list li {
+  font-size: 14px;
+  color: var(--fg);
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+}
+.memorial-list li::before {
+  content: '·';
+  color: #c0504d;
+  margin-right: 6px;
+}
+
+@media (max-width: 420px) {
+  .event-row { flex-direction: column; align-items: flex-start; gap: 6px; padding: 10px 14px; }
+  .event-nums b { font-size: 17px; }
+  .memorial { padding: 16px 12px; }
+}

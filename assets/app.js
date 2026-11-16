@@ -758,6 +758,61 @@
     countdownTimer = setInterval(paint, 1000);
   }
 
+  function renderEvents() {
+    var list = (site.events || []).filter(function (e) { return e && e.date; });
+    if (!list.length) return '';
+    var rows = list.map(function (e, i) {
+      return '<div class="event-row" data-ev="' + i + '">' +
+        '<span class="event-label">距离 <b>' + escapeHtml(e.title || '') + '</b> 已过去</span>' +
+        '<span class="event-nums"><b data-k="d">--</b><i>天</i><b data-k="h">--</b><i>时</i><b data-k="m">--</b><i>分</i><b data-k="s">--</b><i>秒</i></span>' +
+      '</div>';
+    }).join('');
+    return '<h2 class="section-title">事件纪年</h2><div class="events" id="events">' + rows + '</div>';
+  }
+
+  function renderMemorial() {
+    var m = site.memorial;
+    if (!m || m.enabled === false) return '';
+    var names = (m.names || []).filter(Boolean);
+    if (!names.length) return '';
+    return '<section class="memorial">' +
+      '<h2 class="section-title">' + escapeHtml(m.title || '纪念名单') + '</h2>' +
+      (m.subtitle ? '<p class="memorial-sub">' + escapeHtml(m.subtitle) + '</p>' : '') +
+      '<ul class="memorial-list">' +
+        names.map(function (n) { return '<li>' + escapeHtml(n) + '</li>'; }).join('') +
+      '</ul>' +
+      '</section>';
+  }
+
+  var eventsTimer = null;
+  function startEvents() {
+    if (eventsTimer) { clearInterval(eventsTimer); eventsTimer = null; }
+    var root = document.getElementById('events');
+    if (!root) return;
+    var list = (site.events || []).filter(function (e) { return e && e.date; });
+
+    function paint() {
+      var now = Date.now();
+      list.forEach(function (e, i) {
+        var row = root.querySelector('[data-ev="' + i + '"]');
+        if (!row) return;
+        var start = new Date(e.date.replace(/-/g, '/')).getTime();
+        if (!isFinite(start)) return;
+        var diff = now - start;
+        if (diff < 0) diff = 0;
+        var s = splitTime(diff);
+        row.querySelectorAll('[data-k]').forEach(function (n) {
+          var key = n.getAttribute('data-k');
+          var v = s[key];
+          n.textContent = key === 'd' ? String(v) : pad(v);
+        });
+      });
+    }
+
+    paint();
+    eventsTimer = setInterval(paint, 1000);
+  }
+
   function renderWorldCard() {    var mc = site.mcWorld;
     if (!mc || mc.enabled === false) return '';
     return '<div class="world-card">' +
@@ -790,6 +845,8 @@
     return (
       renderHero() +
       renderCountdown() +
+      renderEvents() +
+      renderMemorial() +
       '<div class="server-card" id="server-card" hidden></div>' +
       renderWorldCard() +
       '<h2 class="section-title">' + escapeHtml(sectionLabel('posts', '文章')) + '</h2>' +
@@ -887,6 +944,7 @@
       document.title = site.name + ' · ' + site.tagline;
       mountServerCard();
       startCountdown();
+      startEvents();
     }
 
     var navLinks = document.querySelectorAll('.nav-link');
