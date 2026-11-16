@@ -839,7 +839,7 @@
 
   var clockTimer = null;
   function startClock() {
-    if (clockTimer) { clearInterval(clockTimer); clockTimer = null; }
+    if (clockTimer) { clearTimeout(clockTimer); clockTimer = null; }
     var hour = document.getElementById('clock-hour');
     var min = document.getElementById('clock-min');
     var sec = document.getElementById('clock-sec');
@@ -848,19 +848,29 @@
 
     function paint() {
       var d = new Date();
-      var s = d.getSeconds() + d.getMilliseconds() / 1000;
+      var s = d.getSeconds();
       var m = d.getMinutes() + s / 60;
       var h = (d.getHours() % 12) + m / 60;
+      // 秒针对准刻度：整秒跳格，不带毫秒小数
       sec.setAttribute('transform', 'rotate(' + (s * 6) + ' 50 50)');
       min.setAttribute('transform', 'rotate(' + (m * 6) + ' 50 50)');
       hour.setAttribute('transform', 'rotate(' + (h * 30) + ' 50 50)');
       if (text) {
-        text.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+        text.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(s);
       }
     }
 
+    function schedule() {
+      var now = new Date();
+      var wait = 1000 - now.getMilliseconds() + 12;
+      clockTimer = setTimeout(function () {
+        paint();
+        schedule();
+      }, wait);
+    }
+
     paint();
-    clockTimer = setInterval(paint, 1000);
+    schedule();
   }
 
   function renderWorldCard() {    var mc = site.mcWorld;
