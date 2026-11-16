@@ -767,7 +767,10 @@
         '<span class="event-nums"><b data-k="d">--</b><i>天</i><b data-k="h">--</b><i>时</i><b data-k="m">--</b><i>分</i><b data-k="s">--</b><i>秒</i></span>' +
       '</div>';
     }).join('');
-    return '<h2 class="section-title">事件纪年</h2><div class="events" id="events">' + rows + '</div>';
+    return '<h2 class="section-title">事件纪年</h2><div class="events" id="events">' +
+      rows +
+      '<div class="events-clock">' + renderClock() + '</div>' +
+      '</div>';
   }
 
   function renderMemorial() {
@@ -894,7 +897,6 @@
       renderCountdown() +
       renderEvents() +
       renderMemorial() +
-      renderClock() +
       '<div class="server-card" id="server-card" hidden></div>' +
       renderWorldCard() +
       '<h2 class="section-title">' + escapeHtml(sectionLabel('posts', '文章')) + '</h2>' +
