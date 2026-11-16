@@ -13,15 +13,37 @@ window.BLOG = {
     music: { enabled: true, tracks: [{ title: "歌声与微笑（夢ノ結唱 halo）", artist: "夢ノ結唱 Halo", src: "assets/music/new-halo-song-and-smile.mp3" }, { title: "歌声与微笑（儿歌原版）", artist: "中国儿歌", src: "assets/music/new-official-song-and-smile.mp3" }, { title: "Phototropism", artist: "星尘原创", src: "assets/music/new-stardust-phototropism.mp3" }, { title: "傘", artist: "奶皇 / topkingcream", src: "assets/music/song-01.mp3" }, { title: "四海五洲", artist: "奶皇 / topkingcream", src: "assets/music/song-02.mp3" }, { title: "快把皮球踢到百貨商場", artist: "奶皇 / topkingcream", src: "assets/music/song-03.mp3" }, { title: "文藝b抑鬱的理由", artist: "奶皇 / topkingcream", src: "assets/music/song-04.mp3" }, { title: "發條玩具烏龜", artist: "奶皇 / topkingcream", src: "assets/music/song-05.mp3" }, { title: "白色風車", artist: "奶皇 / topkingcream", src: "assets/music/song-06.mp3" }, { title: "草坪", artist: "奶皇 / topkingcream", src: "assets/music/song-07.mp3" }, { title: "金魚。坏天氣", artist: "奶皇 / topkingcream", src: "assets/music/song-08.mp3" }, { title: "關於那些被我丟掉的東西", artist: "奶皇 / topkingcream", src: "assets/music/song-09.mp3" }] },
     decor: { meteors: true, seasons: true, progress: true, backToTop: true, calendar: true },
     features: { guestbook: true, inbox: true },
-    countdown: { enabled: undefined },
-    events: [],
+    countdown: { enabled: true },
+    events: [
+      {
+        "title": "2024年1月31日 · 楼梯间事件",
+        "date": "2024-01-31"
+      },
+      {
+        "title": "2025年5月6日 · 走读日",
+        "date": "2025-05-06"
+      },
+      {
+        "title": "2025年11月8日 · 孤身一人事件",
+        "date": "2025-11-08"
+      },
+      {
+        "title": "2026年3月31日 · 重生日事件",
+        "date": "2026-03-31"
+      }
+    ],
     memorial: {
       "enabled": true,
       "title": "纪念名单",
       "subtitle": "纪念在所有事件中牺牲的人员",
-      "names": []
+      "names": [
+        "方水",
+        "白鹭Nasagi",
+        "反气旋风Anticyclone",
+        "Cuso4.5H2o"
+      ]
     },
-    clock: { enabled: undefined },
+    clock: { enabled: true },
     mcWorld: { enabled: true, world: "心尘世界！", version: "1.19", leaderTitle: "心尘山领袖", leader: "心辰Stellan", days: "273", achievements: "520", players: "1", lastPlayed: "11-12", pack: "Forge 41 · OptiFine H8" },
     inboxPin: "xinchen-2026-secure",
     supabase: { url: "https://xinchenshan.pages.dev/sb", key: "sb_publishable_cA0BnfnCO4MPZGbbSWCAjQ_pkOOVRT1" },
