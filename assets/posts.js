@@ -13,42 +13,32 @@ window.BLOG = {
     music: { enabled: true, tracks: [{ title: "歌声与微笑（夢ノ結唱 halo）", artist: "夢ノ結唱 Halo", src: "assets/music/new-halo-song-and-smile.mp3" }, { title: "歌声与微笑（儿歌原版）", artist: "中国儿歌", src: "assets/music/new-official-song-and-smile.mp3" }, { title: "Phototropism", artist: "星尘原创", src: "assets/music/new-stardust-phototropism.mp3" }, { title: "傘", artist: "奶皇 / topkingcream", src: "assets/music/song-01.mp3" }, { title: "四海五洲", artist: "奶皇 / topkingcream", src: "assets/music/song-02.mp3" }, { title: "快把皮球踢到百貨商場", artist: "奶皇 / topkingcream", src: "assets/music/song-03.mp3" }, { title: "文藝b抑鬱的理由", artist: "奶皇 / topkingcream", src: "assets/music/song-04.mp3" }, { title: "發條玩具烏龜", artist: "奶皇 / topkingcream", src: "assets/music/song-05.mp3" }, { title: "白色風車", artist: "奶皇 / topkingcream", src: "assets/music/song-06.mp3" }, { title: "草坪", artist: "奶皇 / topkingcream", src: "assets/music/song-07.mp3" }, { title: "金魚。坏天氣", artist: "奶皇 / topkingcream", src: "assets/music/song-08.mp3" }, { title: "關於那些被我丟掉的東西", artist: "奶皇 / topkingcream", src: "assets/music/song-09.mp3" }] },
     decor: { meteors: true, seasons: true, progress: true, backToTop: true, calendar: true },
     features: { guestbook: true, inbox: true },
-    countdown: { enabled: true },
-    events: [
-      {
-        "title": "2024年1月31日 · 楼梯间事件",
-        "date": "2024-01-31"
-      },
-      {
-        "title": "2025年5月6日 · 走读日",
-        "date": "2025-05-06"
-      },
-      {
-        "title": "2025年11月8日 · 孤身一人事件",
-        "date": "2025-11-08"
-      },
-      {
-        "title": "2026年3月31日 · 重生日事件",
-        "date": "2026-03-31"
-      }
-    ],
+    countdown: { enabled: undefined },
+    events: [],
     memorial: {
       "enabled": true,
       "title": "纪念名单",
       "subtitle": "纪念在所有事件中牺牲的人员",
-      "names": [
-        "方水",
-        "白鹭Nasagi",
-        "反气旋风Anticyclone",
-        "Cuso4.5H2o"
-      ]
+      "names": []
     },
-    clock: { enabled: true },
+    clock: { enabled: undefined },
     mcWorld: { enabled: true, world: "心尘世界！", version: "1.19", leaderTitle: "心尘山领袖", leader: "心辰Stellan", days: "273", achievements: "520", players: "1", lastPlayed: "11-12", pack: "Forge 41 · OptiFine H8" },
     inboxPin: "xinchen-2026-secure",
     supabase: { url: "https://xinchenshan.pages.dev/sb", key: "sb_publishable_cA0BnfnCO4MPZGbbSWCAjQ_pkOOVRT1" },
   },
   posts: [
+    {
+      slug: "post-20261116-2159",
+      title: "调查",
+      date: "2026-11-16",
+      tags: ["思考"],
+      summary: "",
+      body: `## 关于对以前事情的回忆
+大概是我2022年末尾左右在大冰箱群裏遇到的他，至少那個時候的他性子還是可以和正常人一樣交流，他那個時候的網名還叫**“電腦桑AWA”**，好吧那個時候我喜歡管她叫姐姐，嗯因爲那個時候是姐弟吧那種思想。因爲三醬的原因，**2022年**末尾開始沾染上DXM和手作刀吧，大概是那個時候嗯，最充滿傳奇色彩的一年，不過，這種日子沒多久，**2023年2月初**左右，**2月14**那天開學我大概也是寫的日記吧，一本深綠色的筆記本，那個本子現在還珍藏在我的箱子裏，我不愿扔掉它...時間很快，3月份那個時候春天剛好要來，我那個時候蠻喜歡電腦桑，那個時候和他每天深夜文愛，基本上一聊就是到半夜，最難以忘記的一段時間，差不多，就是從這個時候開始他的性子開始變的越來越奇怪，越來越暴躁，抑鬱，壓抑，令人畏懼（對我個人）。再後來也就是4月往後，那天我回家一看，他的頭像變成情頭，他告訴我說自己玩真心話大冒險輸了，但是誰會信呢。無意間的也是很巧，我找到了他的女友，後來得知他們在一個學校，有一次他們在學校甚至還提起了我。電腦桑的女友網名叫咕嚕，但不過可惜的是咕嚕和他的男友一樣爛，我説句不好聽的話，這種人就叫**婊子**。發消息告訴我喜歡大肌肉男...呵呵，神經病，我還不如去找當時玩的好的捕漁狐聊聊。雖然説捕漁狐也是個渣男罷了，我不喜歡他，他很虛僞，只爲了表面而顧及著一切，三年時間我對他的印象一直很糟糕...抱歉，這裏扯遠了。但總之，電腦桑在我的印象裏是一個特殊的人，他的錯不應該由我來承擔，也不應得由他人來承擔，他自身的錯，就要他承擔，這是他不得不承認，也不得不去做的事情。...今天先寫到這裏吧，我有些累了。
+
+2026.11.13
+22：15`,
+    },
     {
       slug: "post-20261113-2250",
       title: "暂时没有灵感的文章",
