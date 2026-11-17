@@ -845,15 +845,42 @@
     var needleDeg = -90 + value * 1.8;
     var cls = value >= 75 ? 'is-high' : value >= 50 ? 'is-mid' : value >= 25 ? 'is-lowmid' : 'is-low';
 
-    return '<div class="tension ' + cls + '" data-value="' + value + '">' +
+    return '<div class="tension ' + cls + '" data-value="' + value + '" data-base="' + value + '">' +
       '<svg viewBox="0 0 100 62" class="tension-face" role="img" aria-label="世界紧张度 ' + value + '%">' +
         bands + ticks +
         '<line x1="50" y1="52" x2="50" y2="24" class="tension-needle" transform="rotate(' + needleDeg.toFixed(2) + ' 50 52)"/>' +
         '<circle cx="50" cy="52" r="3" class="tension-pin"/>' +
-        '<text x="50" y="46" text-anchor="middle" class="tension-value">' + value + '%</text>' +
+        '<text x="50" y="48" text-anchor="middle" class="tension-value">' + value + '%</text>' +
       '</svg>' +
       '<div class="tension-caption">世界紧张度</div>' +
       '</div>';
+  }
+
+  var tensionTimer = null;
+  function startTension() {
+    if (tensionTimer) { clearInterval(tensionTimer); tensionTimer = null; }
+    var box = document.querySelector('.tension');
+    if (!box) return;
+    var base = Number(box.getAttribute('data-base')) || 35;
+    var value = Number(box.getAttribute('data-value')) || base;
+    var needle = box.querySelector('.tension-needle');
+    var label = box.querySelector('.tension-value');
+
+    function paint() {
+      needle.setAttribute('transform', 'rotate(' + (-90 + value * 1.8).toFixed(2) + ' 50 52)');
+      label.textContent = Math.round(value) + '%';
+      box.classList.remove('is-low', 'is-lowmid', 'is-mid', 'is-high');
+      box.classList.add(value >= 75 ? 'is-high' : value >= 50 ? 'is-mid' : value >= 25 ? 'is-lowmid' : 'is-low');
+      box.setAttribute('data-value', String(Math.round(value)));
+    }
+
+    paint();
+    tensionTimer = setInterval(function () {
+      var drift = (Math.random() - 0.5) * 1.1;   // 随机波动
+      var pull = (base - value) * 0.03;          // 缓慢回到基准值
+      value = Math.max(0, Math.min(100, value + drift + pull));
+      paint();
+    }, 1200);
   }
 
   function renderClock() {
@@ -1046,6 +1073,7 @@
       startCountdown();
       startEvents();
       startClock();
+      startTension();
     }
 
     var navLinks = document.querySelectorAll('.nav-link');
