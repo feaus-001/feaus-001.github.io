@@ -1066,7 +1066,12 @@
       '<input class="mp-volume" type="range" min="0" max="100" value="70" aria-label="音量">' +
       '<button type="button" class="mp-btn mp-mute" aria-label="静音">🔊</button>' +
       '<span class="mp-meter"><i></i></span>' +
-      '<button type="button" class="mp-btn mp-next" aria-label="下一首">⏭</button>';
+      '<button type="button" class="mp-btn mp-list" aria-label="歌曲列表" aria-expanded="false">☰</button>' +
+      '<button type="button" class="mp-btn mp-next" aria-label="下一首">⏭</button>' +
+      '<div class="mp-drawer" hidden>' +
+        '<div class="mp-drawer-head">播放列表<span class="mp-drawer-count"></span></div>' +
+        '<ul class="mp-tracks"></ul>' +
+      '</div>';
     document.body.appendChild(root);
 
     var titleEl = root.querySelector('.mp-title');
@@ -1076,8 +1081,45 @@
     var volume = root.querySelector('.mp-volume');
     var muteBtn = root.querySelector('.mp-mute');
     var meter = root.querySelector('.mp-meter > i');
+    var listBtn = root.querySelector('.mp-list');
+    var drawer = root.querySelector('.mp-drawer');
+    var trackList = root.querySelector('.mp-tracks');
     var index = 0;
     var dragging = false;
+
+    trackList.innerHTML = tracks.map(function (track, i) {
+      var name = [track.title || track.src, track.artist].filter(Boolean).join(' · ');
+      return '<li><button type="button" class="mp-track" data-i="' + i + '">' +
+        '<span class="mp-track-no">' + (i + 1) + '</span>' +
+        '<span class="mp-track-name">' + escapeHtml(name) + '</span>' +
+        '</button></li>';
+    }).join('');
+    root.querySelector('.mp-drawer-count').textContent = tracks.length + ' 首';
+
+    function markActive() {
+      var items = trackList.querySelectorAll('.mp-track');
+      for (var i = 0; i < items.length; i++) {
+        items[i].classList.toggle('is-active', Number(items[i].getAttribute('data-i')) === index);
+      }
+    }
+
+    trackList.addEventListener('click', function (event) {
+      var btn = event.target.closest('.mp-track');
+      if (!btn) return;
+      load(Number(btn.getAttribute('data-i')), true);
+      drawer.hidden = true;
+      listBtn.setAttribute('aria-expanded', 'false');
+    });
+
+    listBtn.addEventListener('click', function () {
+      drawer.hidden = !drawer.hidden;
+      listBtn.setAttribute('aria-expanded', String(!drawer.hidden));
+      if (!drawer.hidden) {
+        markActive();
+        var active = trackList.querySelector('.mp-track.is-active');
+        if (active && active.scrollIntoView) active.scrollIntoView({ block: 'nearest' });
+      }
+    });
 
     // iOS 上 audio.volume 是只读的（拖动无效果），改用静音键
     var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
@@ -1117,6 +1159,7 @@
       audio.src = track.src;
       titleEl.textContent = [track.title, track.artist].filter(Boolean).join(' · ') || track.src;
       audio.load();
+      markActive();
       if (play) audio.play().catch(function () { /* 浏览器可能拒绝播放 */ });
     }
 

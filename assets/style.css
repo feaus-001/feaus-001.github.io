@@ -1327,3 +1327,73 @@ html.intro-done .site-footer {
   background: rgba(0, 0, 0, 0.14);
 }
 .events-clock .clock-wrap { margin: 0; }
+
+
+/* 播放列表抽屉 */
+.music-player { position: fixed; }
+.mp-drawer {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 10px);
+  width: min(320px, calc(100vw - 24px));
+  max-height: min(56vh, 420px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--card) 92%, #000);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45);
+  z-index: 75;
+}
+.mp-drawer[hidden] { display: none; }
+.mp-drawer-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px 8px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+.mp-drawer-count { font-size: 11px; opacity: 0.8; }
+.mp-tracks {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.mp-track {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--fg);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+.mp-track:hover { background: rgba(127, 127, 127, 0.14); }
+.mp-track.is-active { background: rgba(120, 158, 247, 0.18); color: var(--accent); }
+.mp-track-no {
+  flex: none;
+  width: 22px;
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.mp-track.is-active .mp-track-no { color: var(--accent); }
+.mp-track-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+@media (max-width: 720px) {
+  .mp-drawer { width: calc(100vw - 20px); right: 0; max-height: 52vh; }
+}
