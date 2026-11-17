@@ -769,7 +769,7 @@
     }).join('');
     return '<h2 class="section-title">事件纪年</h2><div class="events" id="events">' +
       rows +
-      '<div class="events-clock">' + renderClock() + '</div>' +
+      '<div class="events-clocks">' + renderClock() + renderTension() + '</div>' +
       '</div>';
   }
 
@@ -814,6 +814,46 @@
 
     paint();
     eventsTimer = setInterval(paint, 1000);
+  }
+
+  function renderTension() {
+    var t = site.tension;
+    if (t && t.enabled === false) return '';
+    var value = Math.max(0, Math.min(100, Number(t && t.value) || 0));
+
+    function polar(deg, r) {
+      var rad = (deg * Math.PI) / 180;
+      return [50 + r * Math.cos(rad), 52 - r * Math.sin(rad)];
+    }
+    function arc(from, to, color, width) {
+      var a = polar(180 - from * 1.8, 36);
+      var b = polar(180 - to * 1.8, 36);
+      var large = Math.abs(to - from) * 1.8 > 180 ? 1 : 0;
+      return '<path d="M' + a[0].toFixed(2) + ' ' + a[1].toFixed(2) +
+        ' A36 36 0 ' + large + ' 1 ' + b[0].toFixed(2) + ' ' + b[1].toFixed(2) + '" ' +
+        'fill="none" stroke="' + color + '" stroke-width="' + width + '" stroke-linecap="butt"/>';
+    }
+
+    var bands = arc(0, 25, '#3f8f5a', 7) + arc(25, 50, '#b8a13a', 7) +
+      arc(50, 75, '#c47a2c', 7) + arc(75, 100, '#b5372f', 7);
+    var ticks = '';
+    for (var i = 0; i <= 10; i++) {
+      var p1 = polar(180 - i * 18, 30);
+      var p2 = polar(180 - i * 18, i % 5 === 0 ? 24 : 27);
+      ticks += '<line x1="' + p1[0].toFixed(2) + '" y1="' + p1[1].toFixed(2) + '" x2="' + p2[0].toFixed(2) + '" y2="' + p2[1].toFixed(2) + '" class="tension-tick' + (i % 5 === 0 ? ' is-big' : '') + '"/>';
+    }
+    var needleDeg = -90 + value * 1.8;
+    var cls = value >= 75 ? 'is-high' : value >= 50 ? 'is-mid' : value >= 25 ? 'is-lowmid' : 'is-low';
+
+    return '<div class="tension ' + cls + '" data-value="' + value + '">' +
+      '<svg viewBox="0 0 100 62" class="tension-face" role="img" aria-label="世界紧张度 ' + value + '%">' +
+        bands + ticks +
+        '<line x1="50" y1="52" x2="50" y2="24" class="tension-needle" transform="rotate(' + needleDeg.toFixed(2) + ' 50 52)"/>' +
+        '<circle cx="50" cy="52" r="3" class="tension-pin"/>' +
+        '<text x="50" y="46" text-anchor="middle" class="tension-value">' + value + '%</text>' +
+      '</svg>' +
+      '<div class="tension-caption">世界紧张度</div>' +
+      '</div>';
   }
 
   function renderClock() {

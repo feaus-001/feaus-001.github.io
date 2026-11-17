@@ -1397,3 +1397,64 @@ html.intro-done .site-footer {
 @media (max-width: 720px) {
   .mp-drawer { width: calc(100vw - 20px); right: 0; max-height: 52vh; }
 }
+
+
+/* 时钟 + 世界紧张度 并排 */
+.events-clocks {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(18px, 6vw, 46px);
+  padding: 14px 16px 18px;
+  border-top: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.14);
+  flex-wrap: wrap;
+}
+
+/* 世界紧张度仪表 */
+.tension {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+}
+.tension-face {
+  width: clamp(120px, 34vw, 160px);
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.35));
+  overflow: visible;
+}
+.tension-tick {
+  stroke: var(--muted);
+  stroke-width: 0.7;
+  opacity: 0.55;
+}
+.tension-tick.is-big { stroke: var(--fg); stroke-width: 1.3; opacity: 0.8; }
+.tension-needle {
+  stroke: var(--fg);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+.tension-pin { fill: var(--fg); }
+.tension-value {
+  font-size: 13px;
+  font-weight: 700;
+  fill: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+.tension-caption {
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+}
+.tension.is-low .tension-value { fill: #4e9e6a; }
+.tension.is-lowmid .tension-value { fill: #c8b04a; }
+.tension.is-mid .tension-value { fill: #d08a35; }
+.tension.is-high .tension-value { fill: #d9534a; }
+.tension.is-high .tension-needle { stroke: #d9534a; }
+
+@media (max-width: 420px) {
+  .events-clocks { gap: 14px; }
+}
