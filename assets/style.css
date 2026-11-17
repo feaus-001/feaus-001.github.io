@@ -1440,8 +1440,11 @@ html.intro-done .site-footer {
 }
 .tension-pin { fill: var(--fg); }
 .tension-value {
-  font-size: 20px;
+  font-size: 21px;
   font-weight: 800;
+  paint-order: stroke;
+  stroke: rgba(0,0,0,0.55);
+  stroke-width: 3px;
   fill: var(--fg);
   font-variant-numeric: tabular-nums;
 }

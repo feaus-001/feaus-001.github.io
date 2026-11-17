@@ -848,9 +848,9 @@
     return '<div class="tension ' + cls + '" data-value="' + value + '" data-base="' + value + '">' +
       '<svg viewBox="0 0 100 62" class="tension-face" role="img" aria-label="世界紧张度 ' + value + '%">' +
         bands + ticks +
-        '<line x1="50" y1="52" x2="50" y2="24" class="tension-needle" transform="rotate(' + needleDeg.toFixed(2) + ' 50 52)"/>' +
+        '<line x1="50" y1="52" x2="50" y2="30" class="tension-needle" transform="rotate(' + needleDeg.toFixed(2) + ' 50 52)"/>' +
         '<circle cx="50" cy="52" r="3" class="tension-pin"/>' +
-        '<text x="50" y="48" text-anchor="middle" class="tension-value">' + value + '%</text>' +
+        '<text x="50" y="45" text-anchor="middle" class="tension-value">' + value + '%</text>' +
       '</svg>' +
       '<div class="tension-caption">世界紧张度</div>' +
       '</div>';
@@ -876,11 +876,11 @@
 
     paint();
     tensionTimer = setInterval(function () {
-      var drift = (Math.random() - 0.5) * 1.1;   // 随机波动
+      var drift = (Math.random() - 0.5) * 2.4 + Math.sin(Date.now() / 18000) * 0.25;   // 随机波动
       var pull = (base - value) * 0.03;          // 缓慢回到基准值
       value = Math.max(0, Math.min(100, value + drift + pull));
       paint();
-    }, 1200);
+    }, 900);
   }
 
   function renderClock() {
